@@ -1,6 +1,8 @@
-import { ProxyManagerInterface } from "./interfaces/proxy.manager.interface";
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
+
+import { BunyanLoggerService } from "../logger/logger.service";
 import { CreateRetrieverJobDto } from "../retriever/dto/request/create-retriever-job.dto";
+import { ProxyManagerInterface } from "./interfaces/proxy.manager.interface";
 
 @Injectable()
 export class ProxyManagerService implements ProxyManagerInterface {

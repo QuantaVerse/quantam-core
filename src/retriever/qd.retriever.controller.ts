@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post } from "@nestjs/common";
-import { QuantamDataRetrieverService } from "./qd.retriever.service";
+
 import { ProxyManagerService } from "../proxy/proxy.manager.service";
 import { CreateRetrieverJobDto } from "./dto/request/create-retriever-job.dto";
+import { QuantamDataRetrieverService } from "./qd.retriever.service";
 
 @Controller("retriever")
 export class QuantamDataRetrieverController {

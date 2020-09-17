@@ -1,9 +1,21 @@
 import { NestFactory } from "@nestjs/core";
-import { QuantamCoreModule } from "./quantam.core.module";
+import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import * as Bunyan from "bunyan";
+
+import { BunyanLoggerService } from "./logger/logger.service";
+import { QuantamCoreModule } from "./quantam.core.module";
 
 async function bootstrap() {
-    const app = await NestFactory.create(QuantamCoreModule);
+    const app = await NestFactory.create<NestExpressApplication>(QuantamCoreModule, {
+        logger: new BunyanLoggerService({
+            projectId: "quantam-core",
+            formatterOptions: {
+                outputMode: "long"
+            }
+        })
+    });
+
     const options = new DocumentBuilder()
         .setTitle("Quantam Core")
         .setDescription("All OpenAPI specs for Quantam Core")
@@ -15,4 +27,5 @@ async function bootstrap() {
 
     await app.listen(3000);
 }
+
 bootstrap();

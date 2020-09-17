@@ -8,9 +8,9 @@
         "prebuild": "rimraf dist",
         "build": "nest build",
         "format": "prettier --write 'src/**/*.ts' 'test/**/*.ts'",
-        "start": "nest start",
-        "start:dev": "nest start --watch",
-        "start:debug": "nest start --debug --watch",
+        "start": "nest start | bunyan",
+        "start:dev": "nest start --watch | bunyan",
+        "start:debug": "nest start --debug --watch | bunyan",
         "start:prod": "node dist/main",
         "lint": "eslint '{src,apps,libs,test}/**/*.ts' --fix",
         "test": "jest",
@@ -24,6 +24,9 @@
         "@nestjs/core": "^7.0.0",
         "@nestjs/platform-express": "^7.0.0",
         "@nestjs/swagger": "4.6.0",
+        "bunyan": "1.8.14",
+        "bunyan-format": "0.2.1",
+        "eslint-plugin-simple-import-sort": "5.0.3",
         "reflect-metadata": "^0.1.13",
         "rimraf": "^3.0.2",
         "rxjs": "^6.5.4",
@@ -55,7 +58,10 @@
     },
     "lint-staged": {
         "{src,test}/**/*.{js,ts}": [
-            "npm run format", "npm run lint", "git add .", "npm run test"
+            "npm run format",
+            "npm run lint",
+            "git add .",
+            "npm run test"
         ]
     },
     "husky": {
@@ -74,7 +80,9 @@
         "transform": {
             "^.+\\.(t|j)s$": "ts-jest"
         },
-        "collectCoverageFrom": ["src/**/*.(js|ts)"],
+        "collectCoverageFrom": [
+            "src/**/*.(js|ts)"
+        ],
         "coverageDirectory": "coverage",
         "testEnvironment": "node"
     },

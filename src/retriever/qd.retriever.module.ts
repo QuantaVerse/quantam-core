@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
-import { QuantamDataRetrieverService } from "./qd.retriever.service";
-import { QuantamDataRetrieverController } from "./qd.retriever.controller";
+
 import { ProxyManagerService } from "../proxy/proxy.manager.service";
+import { QuantamDataRetrieverController } from "./qd.retriever.controller";
+import { QuantamDataRetrieverService } from "./qd.retriever.service";
 
 @Module({
     imports: [],

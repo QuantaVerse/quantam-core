@@ -1,8 +1,10 @@
 import { Module } from "@nestjs/common";
-import { QuantamDataRetrieverModule } from "./retriever/qd.retriever.module";
+
+import { BunyanLoggerModule } from "./logger/logger.module";
+import { BunyanLoggerService } from "./logger/logger.service";
 import { QuantamCoreController } from "./quantam.core.controller";
 import { QuantamCoreService } from "./quantam.core.service";
-import { ProxyManagerService } from "./proxy/proxy.manager.service";
+import { QuantamDataRetrieverModule } from "./retriever/qd.retriever.module";
 
 @Module({
     imports: [QuantamDataRetrieverModule],
