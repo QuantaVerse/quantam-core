@@ -1,6 +1,7 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { QuantamDataRetrieverController } from "../../../src/retriever/qd.retriever.controller";
 import { QuantamDataRetrieverService } from "../../../src/retriever/qd.retriever.service";
+import { ProxyManagerService } from "../../../src/proxy/proxy.manager.service";
 
 describe("QuantamCoreController", () => {
     let retrieverController: QuantamDataRetrieverController;
@@ -8,7 +9,7 @@ describe("QuantamCoreController", () => {
     beforeEach(async () => {
         const app: TestingModule = await Test.createTestingModule({
             controllers: [QuantamDataRetrieverController],
-            providers: [QuantamDataRetrieverService]
+            providers: [QuantamDataRetrieverService, ProxyManagerService]
         }).compile();
 
         retrieverController = app.get<QuantamDataRetrieverController>(QuantamDataRetrieverController);
