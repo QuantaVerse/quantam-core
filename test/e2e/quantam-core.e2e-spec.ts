@@ -2,15 +2,13 @@ import { INestApplication } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
 
-import { QuantamCoreModule } from "../../src/quantam.core.module";
+import { quantam_core_module_metadata } from "../../src/quantam.core.module";
 
 describe("QuantamCoreController (e2e)", () => {
     let app: INestApplication;
 
-    beforeEach(async () => {
-        const moduleFixture: TestingModule = await Test.createTestingModule({
-            imports: [QuantamCoreModule]
-        }).compile();
+    beforeAll(async () => {
+        const moduleFixture: TestingModule = await Test.createTestingModule(quantam_core_module_metadata).compile();
 
         app = moduleFixture.createNestApplication();
         await app.init();
@@ -20,5 +18,9 @@ describe("QuantamCoreController (e2e)", () => {
         return request(app.getHttpServer())
             .get("/health")
             .expect(200);
+    });
+
+    afterAll(async () => {
+        await app.close();
     });
 });
