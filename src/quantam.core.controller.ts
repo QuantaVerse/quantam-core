@@ -1,5 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
-import { QuantamCoreService } from './quantam.core.service';
+import { Controller, Get } from "@nestjs/common";
+
+import { QuantamCoreService } from "./quantam.core.service";
 
 @Controller("")
 export class QuantamCoreController {
