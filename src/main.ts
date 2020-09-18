@@ -1,7 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { NestExpressApplication } from "@nestjs/platform-express";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
-import * as Bunyan from "bunyan";
 
 import { BunyanLoggerService } from "./logger/logger.service";
 import { QuantamCoreModule } from "./quantam.core.module";

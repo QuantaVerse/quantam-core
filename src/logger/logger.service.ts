@@ -9,6 +9,7 @@ export class BunyanLoggerService implements LoggerService {
 
     /**
      * Creates an instance of BunyanLoggerService.
+     *   {({
      *     projectId: string;
      *     formatterOptions: {
      *       outputMode: string; // short|long|simple|json|bunyan
@@ -18,7 +19,7 @@ export class BunyanLoggerService implements LoggerService {
      *     };
      *     customStreams?: any[];
      *   })} options
-     * @memberof BunyanLoggerService
+     * @instance BunyanLoggerService
      * @param options
      */
     constructor(options: {

@@ -1,12 +1,15 @@
 import { Module } from "@nestjs/common";
+import { ModuleMetadata } from "@nestjs/common/interfaces/modules/module-metadata.interface";
 
-import { ProxyManagerService } from "../proxy/proxy.manager.service";
+import { ProxyManagerModule } from "../proxy.core/proxy.manager.module";
 import { QuantamDataRetrieverController } from "./qd.retriever.controller";
 import { QuantamDataRetrieverService } from "./qd.retriever.service";
 
-@Module({
-    imports: [],
+export const qd_retriever_module_metadata: ModuleMetadata = {
+    imports: [ProxyManagerModule],
     controllers: [QuantamDataRetrieverController],
-    providers: [QuantamDataRetrieverService, ProxyManagerService]
-})
+    providers: [QuantamDataRetrieverService]
+};
+
+@Module(qd_retriever_module_metadata)
 export class QuantamDataRetrieverModule {}

@@ -4,5 +4,5 @@ export class CreateRetrieverJobDto {
     interval: string;
     from_date: Date;
     to_date: Date;
-    proxy: string;
+    proxy?: string;
 }

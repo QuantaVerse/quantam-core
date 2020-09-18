@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 
-import { QuantamDataRetrieverServiceInterface } from "./interfaces/qd.retriever.interface";
+import { QuantamDataRetrieverServiceInterface } from "./qd.retriever.interface";
 
 @Injectable()
 export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceInterface {
