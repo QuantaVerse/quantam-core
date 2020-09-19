@@ -1,3 +1,4 @@
 export interface DataProxyStats {
-    name: string;
+    readonly name: string;
+    readonly api_key_name?: string;
 }

@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 
-import { CreateRetrieverJobDto } from "../retriever/dto/request/create-retriever-job.dto";
+import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
+import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service";
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
 import { DataProxyInterface } from "./proxies/proxy/data.proxy.interface";
@@ -11,15 +12,22 @@ import { ProxyManagerInterface } from "./proxy.manager.interface";
 export class ProxyManagerService implements ProxyManagerInterface {
     private readonly _proxyServices: Record<string, DataProxyInterface>;
 
-    constructor(private marketStackService: MarketStackService, private kiteService: KiteService) {
+    constructor(
+        private alphaVantageService: AlphaVantageService,
+        private kiteService: KiteService,
+        private marketStackService: MarketStackService
+    ) {
         this._proxyServices = {
-            marketstack: marketStackService,
-            kite: kiteService
+            alphavantage: alphaVantageService,
+            kite: kiteService,
+            marketstack: marketStackService
         };
     }
 
-    createDataRetrieverJob(createRetrieverJobDto: CreateRetrieverJobDto): void {
-        Logger.log("createDataRetrieverJob " + createRetrieverJobDto);
+    createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): void {
+        Logger.log("dataRetrieverJobDto " + dataRetrieverJobDto);
+        // check eligibility of job based on proxy
+        this._proxyServices.alphavantage.retrieveIntraDayData(dataRetrieverJobDto);
     }
 
     getProxies(): Record<string, DataProxyStats> {

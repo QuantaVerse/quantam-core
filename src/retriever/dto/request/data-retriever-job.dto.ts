@@ -1,4 +1,4 @@
-export class CreateRetrieverJobDto {
+export class DataRetrieverJobDto {
     exchange: string;
     symbol: string;
     interval: string;
