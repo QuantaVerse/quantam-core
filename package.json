@@ -75,8 +75,7 @@
         "{src,test}/**/*.{js,ts}": [
             "npm run format",
             "npm run lint",
-            "git add .",
-            "npm run test"
+            "git add ."
         ]
     },
     "husky": {

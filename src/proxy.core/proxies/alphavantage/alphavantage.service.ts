@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
+import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
 import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
@@ -19,15 +20,22 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         this._alphaVantageAPI = new AlphaVantageAPI(this.API_KEY, "compact", true);
     }
 
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto) {
-        this._alphaVantageAPI
-            .getIntraDayData("HDFCBANK.BSE", "15min")
-            .then(intraDayData => {
-                console.log("IntraDay data:");
-                console.log(intraDayData);
+    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+        return this._alphaVantageAPI
+            .getIntraDayData(dataRetrieverJobDto.symbol, "15min")
+            .then(() => {
+                Logger.log("retrieveIntraDayData: success");
             })
-            .catch(err => {
-                console.error(err);
+            .catch(error => {
+                Logger.error("retrieveIntraDayData: error", error);
+                if (error.toString().startsWith("Error:")) {
+                    throw new HttpException(error.toString(), HttpStatus.BAD_REQUEST);
+                } else {
+                    throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
+                }
+            })
+            .finally(() => {
+                return new DataRetrieverJobResponseDto("001");
             });
     }
 }

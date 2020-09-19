@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 
 import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
+import { DataRetrieverJobResponseDto } from "../retriever/dto/response/data-retriever-job-response.dto";
 import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service";
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
@@ -24,10 +25,20 @@ export class ProxyManagerService implements ProxyManagerInterface {
         };
     }
 
-    createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): void {
-        Logger.log("dataRetrieverJobDto " + dataRetrieverJobDto);
-        // check eligibility of job based on proxy
-        this._proxyServices.alphavantage.retrieveIntraDayData(dataRetrieverJobDto);
+    createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+        Logger.log("dataRetrieverJobDto " + dataRetrieverJobDto.toString());
+        const proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();
+        if (!!proxyName) {
+            if (this._proxyServices.hasOwnProperty(proxyName)) {
+                return this._proxyServices[proxyName].retrieveIntraDayData(dataRetrieverJobDto);
+            } else {
+                throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            // TODO: select based on current details
+            // select default proxy
+            return this._proxyServices.alphavantage.retrieveIntraDayData(dataRetrieverJobDto);
+        }
     }
 
     getProxies(): Record<string, DataProxyStats> {
