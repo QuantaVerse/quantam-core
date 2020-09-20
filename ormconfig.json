@@ -1,0 +1,25 @@
+{
+   "type": "postgres",
+   "host": "localhost",
+   "port": 5432,
+   "username": "quantam_admin",
+   "password": "password",
+   "database": "quantam",
+   "logging": false,
+   "autoLoadEntities": true,
+   "synchronize": true,
+   "entities": [
+      "src/db/entity/*.ts"
+   ],
+   "migrations": [
+      "src/db/migration/*.ts"
+   ],
+   "subscribers": [
+      "src/db/subscriber/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/db/entity",
+      "migrationsDir": "src/db/migration",
+      "subscribersDir": "src/db/subscriber"
+   }
+}

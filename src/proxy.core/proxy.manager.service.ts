@@ -26,7 +26,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
     }
 
     createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
-        Logger.log("dataRetrieverJobDto " + dataRetrieverJobDto.toString());
+        Logger.log("dataRetrieverJobDto " + JSON.stringify(dataRetrieverJobDto));
         const proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();
         if (!!proxyName) {
             if (this._proxyServices.hasOwnProperty(proxyName)) {

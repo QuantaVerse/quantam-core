@@ -15,16 +15,7 @@ export const quantam_core_module_metadata: ModuleMetadata = {
         ConfigModule.forRoot({
             isGlobal: true
         }),
-        TypeOrmModule.forRoot({
-            type: "postgres",
-            host: "localhost",
-            port: 5432,
-            username: "quantam_admin",
-            password: "password",
-            database: "quantam",
-            entities: [],
-            synchronize: true
-        })
+        TypeOrmModule.forRoot()
     ],
     controllers: [QuantamCoreController],
     providers: [QuantamCoreService]
