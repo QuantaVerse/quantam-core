@@ -22,8 +22,8 @@ export class AlphaVantageAPI {
         const url = `${this.baseUrl}/query?function=TIME_SERIES_INTRADAY&symbol=${symbol}&apikey=${this.apiKey}&datatype=csv&outputsize=${this.outputDataSize}&interval=${interval}`;
         this.verbose && Logger.log("AlphaVantageAPI getIntraDayData url >> " + url);
 
-        const responseCSVString = await axios.get(url).then(response => {
-            Logger.log({ url: url, response: response.data });
+        const responseCSVString = await axios.get(url).then((response) => {
+            Logger.log({ url: url, responseSize: response.data?.length });
             if (response?.data?.["Error Message"]) {
                 throw new Error(response.data["Error Message"]);
             }
@@ -52,7 +52,7 @@ export class AlphaVantageAPI {
         const url = `${this.baseUrl}/query?function=TIME_SERIES_DAILY&symbol=${symbol}&apikey=${this.apiKey}&datatype=csv&outputsize=${this.outputDataSize}`;
         this.verbose && Logger.log("AlphaVantageAPI getDailyData url >> " + url);
 
-        const responseCSVString = await axios.get(url).then(response => {
+        const responseCSVString = await axios.get(url).then((response) => {
             Logger.log({ url: url, responseLength: response.data?.length });
             if (response?.data?.["Error Message"]) {
                 throw new Error(response.data["Error Message"]);

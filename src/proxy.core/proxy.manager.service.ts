@@ -6,7 +6,6 @@ import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
 import { DataProxyInterface } from "./proxies/proxy/data.proxy.interface";
-import { DataProxyService } from "./proxies/proxy/data.proxy.service";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.stats";
 import { ProxyManagerInterface } from "./proxy.manager.interface";
 
@@ -29,8 +28,9 @@ export class ProxyManagerService implements ProxyManagerInterface {
 
     createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
         Logger.log("dataRetrieverJobDto " + JSON.stringify(dataRetrieverJobDto));
+
         let proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();
-        if (!this._proxyServices.hasOwnProperty(proxyName)) {
+        if (typeof proxyName === "string" && !this._proxyServices.hasOwnProperty(proxyName)) {
             Logger.warn("createDataRetrieverJob : Proxy not found : HttpStatus.BAD_REQUEST");
             throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
         } else if (proxyName === undefined) {
@@ -38,6 +38,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
             // select default proxy from config
             proxyName = "alphavantage";
         }
+
         const interval: number | undefined = dataRetrieverJobDto.interval;
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
             if (interval === 1440) {

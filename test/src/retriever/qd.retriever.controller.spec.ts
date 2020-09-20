@@ -3,7 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { QuantamDataRetrieverController } from "../../../src/retriever/qd.retriever.controller";
 import { qd_retriever_module_metadata } from "../../../src/retriever/qd.retriever.module";
 
-describe("QuantamCoreController", () => {
+describe("QuantamDataRetrieverControllerTest", () => {
     let retrieverController: QuantamDataRetrieverController;
 
     beforeEach(async () => {

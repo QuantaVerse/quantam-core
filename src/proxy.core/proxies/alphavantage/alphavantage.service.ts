@@ -32,11 +32,11 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
                     .then(() => {
                         Logger.log("saveIntraDayDataToDb: success");
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         Logger.log("saveIntraDayDataToDb: failed", error);
                     });
             })
-            .catch(error => {
+            .catch((error) => {
                 if (error.toString().startsWith("Error:")) {
                     Logger.warn("retrieveIntraDayData: error", error);
                     throw new HttpException(error.toString(), HttpStatus.BAD_REQUEST);
@@ -51,8 +51,8 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
     }
 
     async saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void> {
-        Logger.log(`saveIntraDayDataToDb: symbol=${symbol} interval=${interval} data size ${data.length}`);
-        data.forEach(d => {
+        Logger.log(`saveIntraDayDataToDb: symbol=${symbol} interval=${interval} IntraDayBarArrayLength=${data.length}`);
+        data.forEach((d) => {
             const stockData = new StockData(
                 symbol,
                 interval,
@@ -78,11 +78,11 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
                     .then(() => {
                         Logger.log("saveDailyDataToDb: success");
                     })
-                    .catch(error => {
+                    .catch((error) => {
                         Logger.log("saveDailyDataToDb: failed", error);
                     });
             })
-            .catch(error => {
+            .catch((error) => {
                 if (error.toString().startsWith("Error:")) {
                     Logger.warn("retrieveDailyData: error", error);
                     throw new HttpException(error.toString(), HttpStatus.BAD_REQUEST);
@@ -97,8 +97,8 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
     }
 
     async saveDailyDataToDb(symbol: string, interval: number, data: DailyBar[]): Promise<void> {
-        Logger.log(`saveDailyDataToDb: symbol=${symbol} interval=${interval} data size ${data.length}`);
-        data.forEach(d => {
+        Logger.log(`saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`);
+        data.forEach((d) => {
             const stockData = new StockData(
                 symbol,
                 interval,
