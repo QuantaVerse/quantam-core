@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity("StockData")
 export class StockData {
@@ -29,6 +29,15 @@ export class StockData {
     @Column()
     volume: number;
 
+    @Column()
+    source: string;
+
+    @Column()
+    valid: boolean;
+
+    @Column()
+    createdTime: Date;
+
     constructor(
         symbol: string,
         interval: number,
@@ -37,7 +46,9 @@ export class StockData {
         close: number,
         high: number,
         low: number,
-        volume: number
+        volume: number,
+        source: string,
+        valid = false
     ) {
         this.id = symbol + "_" + interval + "min_" + timestamp;
         this.symbol = symbol;
@@ -48,5 +59,8 @@ export class StockData {
         this.high = high;
         this.low = low;
         this.volume = volume;
+        this.source = source;
+        this.valid = valid;
+        this.createdTime = new Date();
     }
 }

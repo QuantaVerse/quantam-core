@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, UpdateResult } from "typeorm";
 import { DeleteResult } from "typeorm/query-builder/result/DeleteResult";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
@@ -15,6 +15,10 @@ export class StockDataService {
 
     async create(stockData: StockData): Promise<InsertResult> {
         return await this.stockDataRepository.insert(stockData);
+    }
+
+    async upsert(stockData: StockData): Promise<StockData> {
+        return await this.stockDataRepository.save(stockData);
     }
 
     async findAll(): Promise<StockData[]> {

@@ -6,12 +6,14 @@ import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
 import { DataProxyInterface } from "./proxies/proxy/data.proxy.interface";
+import { DataProxyService } from "./proxies/proxy/data.proxy.service";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.stats";
 import { ProxyManagerInterface } from "./proxy.manager.interface";
 
 @Injectable()
 export class ProxyManagerService implements ProxyManagerInterface {
     private readonly _proxyServices: Record<string, DataProxyInterface>;
+    private readonly VALID_INTERVALS = [1, 5, 15, 30, 60, 1440];
 
     constructor(
         private alphaVantageService: AlphaVantageService,
@@ -27,17 +29,25 @@ export class ProxyManagerService implements ProxyManagerInterface {
 
     createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
         Logger.log("dataRetrieverJobDto " + JSON.stringify(dataRetrieverJobDto));
-        const proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();
-        if (!!proxyName) {
-            if (this._proxyServices.hasOwnProperty(proxyName)) {
-                return this._proxyServices[proxyName].retrieveIntraDayData(dataRetrieverJobDto);
+        let proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();
+        if (!this._proxyServices.hasOwnProperty(proxyName)) {
+            Logger.warn("createDataRetrieverJob : Proxy not found : HttpStatus.BAD_REQUEST");
+            throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
+        } else if (proxyName === undefined) {
+            // TODO: select based on current details
+            // select default proxy from config
+            proxyName = "alphavantage";
+        }
+        const interval: number | undefined = dataRetrieverJobDto.interval;
+        if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
+            if (interval === 1440) {
+                return this._proxyServices[proxyName].retrieveDailyData(dataRetrieverJobDto);
             } else {
-                throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
+                return this._proxyServices[proxyName].retrieveIntraDayData(dataRetrieverJobDto);
             }
         } else {
-            // TODO: select based on current details
-            // select default proxy
-            return this._proxyServices.alphavantage.retrieveIntraDayData(dataRetrieverJobDto);
+            Logger.warn("createDataRetrieverJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
+            throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -55,7 +65,9 @@ export class ProxyManagerService implements ProxyManagerInterface {
         if (this._proxyServices.hasOwnProperty(proxyName.toLowerCase())) {
             return this._proxyServices[proxyName.toLowerCase()].getProxyStats();
         } else {
-            throw new HttpException(`Proxy with name '${proxyName.toLowerCase()}' not found`, HttpStatus.BAD_REQUEST);
+            const message = `Proxy with name '${proxyName.toLowerCase()}' not found`;
+            Logger.warn(`getProxyDetails : ${message} : HttpStatus.BAD_REQUEST`);
+            throw new HttpException(message, HttpStatus.BAD_REQUEST);
         }
     }
 }

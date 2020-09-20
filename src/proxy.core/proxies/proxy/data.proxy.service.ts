@@ -29,4 +29,16 @@ export class DataProxyService implements DataProxyInterface {
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
+
+    retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+        const message = `retrieveDailyData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+        Logger.warn(message);
+        throw new HttpException(message, HttpStatus.BAD_REQUEST);
+    }
+
+    saveDailyDataToDb(symbol: string, interval: number, data: any[]): Promise<void> {
+        const message = `saveDailyDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+        Logger.warn(message);
+        throw new HttpException(message, HttpStatus.BAD_REQUEST);
+    }
 }
