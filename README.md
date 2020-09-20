@@ -14,3 +14,5 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
 - [ ] Add tests for proxies
 - [ ] Add Docker image
 - [ ] Separate dev and prod env
+- [ ] Update Readme
+- [ ] Update APISpecs

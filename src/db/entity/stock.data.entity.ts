@@ -1,17 +1,17 @@
 import { Column, Entity, PrimaryColumn } from "typeorm";
 
-@Entity("StockData")
+@Entity("stock_data")
 export class StockData {
-    @PrimaryColumn()
-    id: string;
-
     @Column()
+    uid: string;
+
+    @PrimaryColumn()
     symbol: string;
 
-    @Column()
+    @PrimaryColumn()
     interval: number;
 
-    @Column()
+    @PrimaryColumn()
     timestamp: Date;
 
     @Column({ type: "float" })
@@ -50,7 +50,7 @@ export class StockData {
         source: string,
         valid = false
     ) {
-        this.id = symbol + "_" + interval + "min_" + timestamp;
+        this.uid = symbol + "_" + interval + "min_" + timestamp;
         this.symbol = symbol;
         this.interval = interval;
         this.timestamp = timestamp;
