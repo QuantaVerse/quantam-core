@@ -6,7 +6,13 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
 ### Tasks
 - [x] Add Bunyan global logger
 - [ ] Add Bunyan logger on module level
-- [ ] Add env and config module
-- [ ] Add postgres module
-- [ ] Add generic proxy interface
-- [ ] TypeORM migration
+- [x] Add env and config module
+- [x] Add postgres module
+- [x] Add generic proxy interface
+- [x] TypeORM migration
+- [ ] Add tests for entities, repo, service
+- [ ] Add tests for proxies
+- [ ] Add Docker image
+- [ ] Separate dev and prod env
+- [ ] Update Readme
+- [ ] Update APISpecs

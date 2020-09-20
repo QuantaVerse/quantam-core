@@ -5,7 +5,7 @@ import * as colors from "colors";
 
 export class BunyanLoggerService implements LoggerService {
     private readonly bunyanLogger: Bunyan;
-    private isEmpty = obj => [Object, Array].includes((obj || {}).constructor) && !Object.entries(obj || {}).length;
+    private isEmpty = (obj) => [Object, Array].includes((obj || {}).constructor) && !Object.entries(obj || {}).length;
 
     /**
      * Creates an instance of BunyanLoggerService.
@@ -50,11 +50,11 @@ export class BunyanLoggerService implements LoggerService {
 
     public error(message: any | any[], trace?: string | undefined, context?: string | undefined) {
         message = Array.isArray(message) ? message : [message];
-        this.bunyanLogger.error({ context, trace }, ...message.map(msg => colors.red(msg)));
+        this.bunyanLogger.error({ context, trace }, ...message.map((msg) => colors.red(msg)));
     }
 
     public warn(message: any | any[], context?: string | undefined) {
         message = Array.isArray(message) ? message : [message];
-        this.bunyanLogger.warn({ context }, ...message.map(msg => colors.yellow(msg)));
+        this.bunyanLogger.warn({ context }, ...message.map((msg) => colors.yellow(msg)));
     }
 }

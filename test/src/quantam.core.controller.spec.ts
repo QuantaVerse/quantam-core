@@ -3,7 +3,7 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { QuantamCoreController } from "../../src/quantam.core.controller";
 import { quantam_core_module_metadata } from "../../src/quantam.core.module";
 
-describe("QuantamCoreController", () => {
+describe("QuantamCoreControllerTest", () => {
     let coreController: QuantamCoreController;
 
     beforeEach(async () => {

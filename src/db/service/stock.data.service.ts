@@ -17,6 +17,10 @@ export class StockDataService {
         return await this.stockDataRepository.insert(stockData);
     }
 
+    async upsert(stockData: StockData): Promise<StockData> {
+        return await this.stockDataRepository.save(stockData);
+    }
+
     async findAll(): Promise<StockData[]> {
         return await this.stockDataRepository.find();
     }
