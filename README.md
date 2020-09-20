@@ -9,3 +9,4 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
 - [ ] Add env and config module
 - [ ] Add postgres module
 - [ ] Add generic proxy interface
+- [ ] TypeORM migration

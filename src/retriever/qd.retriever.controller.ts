@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
 
 import { ProxyManagerService } from "../proxy.core/proxy.manager.service";
-import { CreateRetrieverJobDto } from "./dto/request/create-retriever-job.dto";
+import { DataRetrieverJobDto } from "./dto/request/data-retriever-job.dto";
+import { DataRetrieverJobResponseDto } from "./dto/response/data-retriever-job-response.dto";
 import { QuantamDataRetrieverService } from "./qd.retriever.service";
 
 @Controller("retriever")
@@ -17,7 +18,7 @@ export class QuantamDataRetrieverController {
     }
 
     @Post("createJob")
-    pullDataFromProxy(@Body() createRetrieverJobDto: CreateRetrieverJobDto) {
-        return this.proxyManagerService.createDataRetrieverJob(createRetrieverJobDto);
+    pullDataFromProxy(@Body() dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+        return this.proxyManagerService.createDataRetrieverJob(dataRetrieverJobDto);
     }
 }

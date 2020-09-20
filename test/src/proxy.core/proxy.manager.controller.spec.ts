@@ -1,8 +1,6 @@
 import { HttpException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
-import { mock } from "jest-mock-extended";
 
-import { DataProxyStats } from "../../../src/proxy.core/proxies/proxy/data.proxy.stats";
 import { ProxyManagerController } from "../../../src/proxy.core/proxy.manager.controller";
 import { proxy_manager_module_metadata } from "../../../src/proxy.core/proxy.manager.module";
 

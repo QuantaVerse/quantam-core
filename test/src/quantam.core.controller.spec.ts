@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 
 import { QuantamCoreController } from "../../src/quantam.core.controller";
 import { quantam_core_module_metadata } from "../../src/quantam.core.module";
-import { QuantamCoreService } from "../../src/quantam.core.service";
 
 describe("QuantamCoreController", () => {
     let coreController: QuantamCoreController;
