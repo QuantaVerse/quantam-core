@@ -19,14 +19,22 @@ export class IntraDayBar {
     Volume: number;
 }
 
+export interface ProxyAPIStats {
+    status: boolean;
+}
+
 export interface DataProxyStats {
     readonly name: string;
     readonly api_key_name: string;
     readonly proxy_config: Record<string, string>;
+    readonly api_stats: ProxyAPIStats;
 }
 
 export interface DataProxyInterface {
     getProxyStats(): DataProxyStats;
+    fetchAPIStats(): void;
+    proxyHealthCheckScheduler(): void;
+    pingProxyHealth(): void;
     retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto;
     saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void>;
     retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto;

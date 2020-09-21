@@ -20,6 +20,21 @@ export class AlphaVantageAPI {
         this.verbose = verbose !== undefined ? verbose : false;
     }
 
+    async getHealth(): Promise<any> {
+        const symbolSearchFunction = "SYMBOL_SEARCH";
+        const demoAPIKey = "demo";
+        const url: string = buildUrl(this.baseUrl, {
+            path: "query",
+            queryParams: {
+                function: symbolSearchFunction,
+                keywords: "tesco",
+                apikey: demoAPIKey
+            }
+        });
+        this.verbose && Logger.log("AlphaVantageAPI : getHealth url >> " + url);
+        return await axios.get(url);
+    }
+
     async getIntraDayData(symbol: string, interval: string): Promise<IntraDayBar[]> {
         const intraDayFunction = "TIME_SERIES_INTRADAY";
         const url: string = buildUrl(this.baseUrl, {
@@ -33,10 +48,10 @@ export class AlphaVantageAPI {
                 interval: interval
             }
         });
-        this.verbose && Logger.log("AlphaVantageAPI getIntraDayData url >> " + url);
+        this.verbose && Logger.log("AlphaVantageAPI : getIntraDayData url >> " + url);
 
         const responseCSVString: string = await axios.get(url).then((response) => {
-            Logger.log({ url: url, responseSize: response.data?.length });
+            this.verbose && Logger.log({ url: url, responseSize: response.data?.length });
             if (response?.data?.["Error Message"]) {
                 throw new Error(response.data["Error Message"]);
             }
@@ -73,10 +88,10 @@ export class AlphaVantageAPI {
                 outputsize: this.outputSize
             }
         });
-        this.verbose && Logger.log("AlphaVantageAPI getDailyData url >> " + url);
+        this.verbose && Logger.log("AlphaVantageAPI : getDailyData url >> " + url);
 
         const responseCSVString: string = await axios.get(url).then((response) => {
-            Logger.log({ url: url, responseLength: response.data?.length });
+            this.verbose && Logger.log({ url: url, responseLength: response.data?.length });
             if (response?.data?.["Error Message"]) {
                 throw new Error(response.data["Error Message"]);
             }

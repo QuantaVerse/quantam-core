@@ -52,6 +52,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
     }
 
     getProxies(): Record<string, DataProxyStats> {
+        Logger.log("ProxyManagerService : getProxies");
         const proxyStats: Record<string, DataProxyStats> = {};
         for (const proxyName in this._proxyServices) {
             if (this._proxyServices.hasOwnProperty(proxyName)) {
@@ -62,6 +63,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
     }
 
     getProxyDetails(proxyName: string): DataProxyStats {
+        Logger.log(`ProxyManagerService : getProxyDetails for proxy with name='${proxyName}'`);
         if (this._proxyServices.hasOwnProperty(proxyName.toLowerCase())) {
             return this._proxyServices[proxyName.toLowerCase()].getProxyStats();
         } else {

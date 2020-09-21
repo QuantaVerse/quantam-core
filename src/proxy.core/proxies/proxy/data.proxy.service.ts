@@ -1,8 +1,9 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { Cron, CronExpression } from "@nestjs/schedule";
 
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
 import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
-import { DataProxyInterface, DataProxyStats } from "./data.proxy.interface";
+import { DataProxyInterface, DataProxyStats, ProxyAPIStats } from "./data.proxy.interface";
 
 @Injectable()
 export class DataProxyService implements DataProxyInterface {
@@ -10,39 +11,59 @@ export class DataProxyService implements DataProxyInterface {
     protected API_KEY_NAME: string;
     protected API_KEY: string;
     protected PROXY_CONFIG: Record<string, string>;
+    protected PROXY_API_STATS: ProxyAPIStats;
 
     constructor() {
         this.PROXY_CONFIG = {};
+        this.PROXY_API_STATS = {};
     }
 
     getProxyStats(): DataProxyStats {
         return {
             name: this.PROXY_NAME,
             api_key_name: this.API_KEY_NAME,
-            proxy_config: this.PROXY_CONFIG
+            proxy_config: this.PROXY_CONFIG,
+            api_stats: this.PROXY_API_STATS
         };
     }
 
+    fetchAPIStats(): void {
+        // service call cron per 5 min
+        this.PROXY_API_STATS = {};
+    }
+
+    @Cron(CronExpression.EVERY_5_MINUTES)
+    proxyHealthCheckScheduler(): void {
+        this.pingProxyHealth();
+    }
+
+    pingProxyHealth(): void {
+        if (this.PROXY_NAME !== undefined) {
+            const message = `DataProxyService : pingProxyHealth : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+            Logger.warn(message);
+        }
+    }
+
     retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
-        const message = `retrieveIntraDayData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+        const message = `DataProxyService : retrieveIntraDayData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
 
     async saveIntraDayDataToDb(symbol: string, interval: number, data: any[]): Promise<void> {
-        const message = `saveIntraDayDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+        const message = `DataProxyService : saveIntraDayDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
 
     retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
-        const message = `retrieveDailyData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+        const message = `DataProxyService : retrieveDailyData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
 
     saveDailyDataToDb(symbol: string, interval: number, data: any[]): Promise<void> {
-        const message = `saveDailyDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+        const message = `DataProxyService : saveDailyDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
