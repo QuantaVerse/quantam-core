@@ -1,6 +1,5 @@
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
 import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
-import { DataProxyStats } from "./data.proxy.stats";
 
 export class DailyBar {
     Timestamp: Date;
@@ -9,9 +8,6 @@ export class DailyBar {
     Low: number;
     Close: number;
     Volume: number;
-    AdjClose: number;
-    DividendAmount: number;
-    SplitCoefficient: number;
 }
 
 export class IntraDayBar {
@@ -21,6 +17,12 @@ export class IntraDayBar {
     Low: number;
     Close: number;
     Volume: number;
+}
+
+export interface DataProxyStats {
+    readonly name: string;
+    readonly api_key_name: string;
+    readonly proxy_config: Record<string, string>;
 }
 
 export interface DataProxyInterface {

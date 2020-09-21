@@ -5,8 +5,7 @@ import { DataRetrieverJobResponseDto } from "../retriever/dto/response/data-retr
 import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service";
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
-import { DataProxyInterface } from "./proxies/proxy/data.proxy.interface";
-import { DataProxyStats } from "./proxies/proxy/data.proxy.stats";
+import { DataProxyInterface, DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 import { ProxyManagerInterface } from "./proxy.manager.interface";
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from "@nestjs/common";
 
-import { DataProxyStats } from "./proxies/proxy/data.proxy.stats";
+import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 import { ProxyManagerService } from "./proxy.manager.service";
 
 @Controller("proxy_manager")
