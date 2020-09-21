@@ -4,19 +4,19 @@ import { fromCSV, IDataFrame } from "data-forge";
 
 import { buildUrl } from "../../../util/build.url";
 import { DailyBar, IntraDayBar } from "../proxy/data.proxy.interface";
-import { OutputSize } from "./alphavantage.interface";
+import { DataType, OutputSize } from "./alphavantage.interface";
 
 export class AlphaVantageAPI {
     private readonly baseUrl = "https://www.alphavantage.co";
     private readonly apiKey: string;
-    private readonly dataType: string;
+    private readonly dataType: DataType;
     private readonly outputSize: OutputSize;
     private readonly verbose: boolean;
 
-    constructor(apiKey: string, dataType: string, outputSize: string, verbose: boolean | undefined) {
+    constructor(apiKey: string, dataType: DataType, outputSize: OutputSize, verbose: boolean | undefined) {
         this.apiKey = apiKey;
         this.dataType = dataType;
-        this.outputSize = outputSize !== undefined ? outputSize : "compact";
+        this.outputSize = outputSize;
         this.verbose = verbose !== undefined ? verbose : false;
     }
 

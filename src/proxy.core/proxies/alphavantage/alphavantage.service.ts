@@ -8,7 +8,7 @@ import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/dat
 import { DailyBar, DataProxyInterface, IntraDayBar } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
-import { AlphavantageProxyConfig } from "./alphavantage.interface";
+import { AlphavantageProxyConfig, DataType, OutputSize } from "./alphavantage.interface";
 
 @Injectable()
 export class AlphaVantageService extends DataProxyService implements DataProxyInterface {
@@ -21,7 +21,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         this.API_KEY_NAME = "PROXY_APIKEY_ALPHA_VANTAGE";
         this.API_KEY = this.configService.get<string>(this.API_KEY_NAME);
 
-        this.ALPHA_PROXY_CONFIG = new AlphavantageProxyConfig("csv", "full");
+        this.ALPHA_PROXY_CONFIG = new AlphavantageProxyConfig(DataType.CSV, OutputSize.Full);
         this.PROXY_CONFIG = this.ALPHA_PROXY_CONFIG;
 
         this._alphaVantageAPI = new AlphaVantageAPI(
