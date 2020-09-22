@@ -1,23 +1,6 @@
+import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
-
-export class DailyBar {
-    Timestamp: Date;
-    Open: number;
-    High: number;
-    Low: number;
-    Close: number;
-    Volume: number;
-}
-
-export class IntraDayBar {
-    Timestamp: Date;
-    Open: number;
-    High: number;
-    Low: number;
-    Close: number;
-    Volume: number;
-}
+import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
 
 /***
  * Defining the status of proxy based on previous API calls

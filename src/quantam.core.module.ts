@@ -43,5 +43,18 @@ export const quantam_core_module_metadata: ModuleMetadata = {
     providers: [QuantamCoreService]
 };
 
+/**
+ * @module QuantamCoreModule
+ * Primary module for the application
+ *
+ *
+ * ModuleMetadata:
+ *
+ * imports: [QuantamDataRetrieverModule, ProxyManagerModule, ConfigModule, TypeOrmModule, ScheduleModule]
+ *
+ * controllers: [QuantamCoreController]
+ *
+ * providers: [QuantamCoreService]
+ */
 @Module(quantam_core_module_metadata)
 export class QuantamCoreModule {}

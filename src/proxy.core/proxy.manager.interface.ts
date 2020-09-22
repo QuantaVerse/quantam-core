@@ -1,5 +1,5 @@
 import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../retriever/dto/response/data-retriever-job-response.dto";
+import { DataRetrieverJobResponseDto } from "./proxies/dto/response/data-retriever-job-response.dto";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 
 export interface ProxyManagerInterface {

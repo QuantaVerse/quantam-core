@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
+import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
 import { DataProxyInterface, DataProxyStats, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
 
 @Injectable()

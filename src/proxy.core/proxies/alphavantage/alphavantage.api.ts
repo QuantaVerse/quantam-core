@@ -2,8 +2,8 @@ import { Logger } from "@nestjs/common";
 import axios from "axios";
 import { fromCSV, IDataFrame } from "data-forge";
 
+import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { buildUrl } from "../../../util/build.url";
-import { DailyBar, IntraDayBar } from "../proxy/data.proxy.interface";
 import { DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";
 
 export class AlphaVantageAPI implements IAlphavantageAPI {

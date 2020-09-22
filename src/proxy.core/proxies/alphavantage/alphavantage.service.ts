@@ -1,11 +1,12 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
+import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { StockData } from "../../../db/entity/stock.data.entity";
 import { StockDataService } from "../../../db/service/stock.data.service";
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
-import { DailyBar, DataProxyInterface, IntraDayBar } from "../proxy/data.proxy.interface";
+import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
 import { AlphavantageProxyConfig, DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";

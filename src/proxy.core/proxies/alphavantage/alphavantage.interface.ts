@@ -1,4 +1,4 @@
-import { DailyBar, IntraDayBar } from "../proxy/data.proxy.interface";
+import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 
 export enum OutputSize {
     Full = "full",

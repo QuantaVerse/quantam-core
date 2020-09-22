@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 
 import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../retriever/dto/response/data-retriever-job-response.dto";
 import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service";
+import { DataRetrieverJobResponseDto } from "./proxies/dto/response/data-retriever-job-response.dto";
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
 import { DataProxyInterface, DataProxyStats } from "./proxies/proxy/data.proxy.interface";
@@ -26,6 +26,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
     }
 
     createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+        // TODO: FIX this method with
         Logger.log("dataRetrieverJobDto " + JSON.stringify(dataRetrieverJobDto));
 
         let proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();

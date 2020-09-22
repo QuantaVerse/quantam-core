@@ -21,10 +21,12 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
 - [x] Add generic proxy interface
 - [x] TypeORM migration
 - [ ] Add tests for entities, repo, service
-- [ ] Add tests for proxies
+- [ ] Add tests/mocks/stubs/spies for proxies
 - [ ] Add Docker image
 - [ ] Separate dev and prod env
 - [ ] Update Readme
 - [ ] Update APISpecs
+- [ ] Update Swagger docs in code
+- [ ] (Optional) Create swagger yaml files
 - [ ] Fix lint issues
 
