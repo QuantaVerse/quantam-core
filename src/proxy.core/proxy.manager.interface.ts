@@ -1,9 +1,13 @@
-import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
+import { HttpException } from "@nestjs/common";
+
+import { DataRetrievalJobDto } from "./proxies/dto/request/data-retrieval-job.dto";
 import { DataRetrieverJobResponseDto } from "./proxies/dto/response/data-retriever-job-response.dto";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 
 export interface ProxyManagerInterface {
-    createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto;
+    createDataRetrievalJob(
+        dataRetrieverJobDto: DataRetrievalJobDto
+    ): Promise<DataRetrieverJobResponseDto | HttpException>;
     getProxies(): Record<string, DataProxyStats>;
     getProxyDetails(proxyName: string): DataProxyStats;
 }

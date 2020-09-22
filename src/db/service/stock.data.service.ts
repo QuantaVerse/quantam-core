@@ -22,14 +22,11 @@ export class StockDataService {
         return await this.stockDataRepository.save(stockData);
     }
 
-    async findAll(): Promise<StockData[]> {
-        return await this.stockDataRepository.find();
-    }
-
     async fetchStockData(stockDataRequestDto: StockDataRequestDto) {
         return await this.stockDataRepository.find({
             where: {
                 symbol: stockDataRequestDto.symbol,
+                exchange: stockDataRequestDto.exchange,
                 interval: stockDataRequestDto.interval,
                 timestamp: Between(stockDataRequestDto.startDate, stockDataRequestDto.endDate)
             },

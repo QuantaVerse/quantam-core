@@ -36,7 +36,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
         return await axios.get(url);
     }
 
-    async getIntraDayData(symbol: string, interval: string): Promise<IntraDayBar[]> {
+    async getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]> {
         const intraDayFunction = "TIME_SERIES_INTRADAY";
         const url: string = buildUrl(this.baseUrl, {
             path: "query",
@@ -77,7 +77,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
         return dataFrame.toArray();
     }
 
-    async getDailyData(symbol: string, interval: string): Promise<DailyBar[]> {
+    async getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]> {
         const timeSeriesDailyFunction = "TIME_SERIES_DAILY";
         const url: string = buildUrl(this.baseUrl, {
             path: "query",

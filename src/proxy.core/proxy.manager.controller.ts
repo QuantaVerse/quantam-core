@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, Param, Post } from "@nestjs/common";
 
-import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
+import { DataRetrievalJobDto } from "./proxies/dto/request/data-retrieval-job.dto";
 import { DataRetrieverJobResponseDto } from "./proxies/dto/response/data-retriever-job-response.dto";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 import { ProxyManagerService } from "./proxy.manager.service";
@@ -20,7 +20,9 @@ export class ProxyManagerController {
     }
 
     @Post("createJob")
-    pullDataFromProxy(@Body() dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
-        return this.proxyManagerService.createDataRetrieverJob(dataRetrieverJobDto);
+    pullDataFromProxy(
+        @Body() dataRetrieverJobDto: DataRetrievalJobDto
+    ): Promise<DataRetrieverJobResponseDto | HttpException> {
+        return this.proxyManagerService.createDataRetrievalJob(dataRetrieverJobDto);
     }
 }

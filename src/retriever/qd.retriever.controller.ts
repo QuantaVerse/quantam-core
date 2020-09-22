@@ -1,6 +1,7 @@
 import { Controller, Get, HttpException, HttpStatus, Logger, Query } from "@nestjs/common";
 
 import { StockData } from "../db/entity/stock.data.entity";
+import { DataRetrievalJobDto } from "../proxy.core/proxies/dto/request/data-retrieval-job.dto";
 import { ProxyManagerService } from "../proxy.core/proxy.manager.service";
 import { StockDataRequestDto } from "./dto/request/stock-data.request.dto";
 import { StockDataResponseDto } from "./dto/response/stock-data.response.dto";
@@ -55,7 +56,8 @@ export class QuantamDataRetrieverController {
      * common valid intervals = ["1m", "1min", "5m", "60m", "1h", "1hour", "1d", "1day", "1w", "1week", "1month"]
      * @param {string} [startDate=currentTime-interval] - data gets fetched from startDate to endDate
      * @param {string} [endDate=currentTime] - data gets fetched from startDate to endDate
-     * startDate and endDate should have one of the following format: "yyyy-mm-dd:hh-mm-ss" OR "yyyy-mm-dd" OR "yy-mm-dd"
+     * startDate and endDate should have any format accepted by JavaScript Date.parse()
+     * Following formats are recommended: "yyyy-mm-dd:hh:mm:ss" OR "yyyy-mm-dd" OR ISOString()
      *
      * @return {StockDataResponseDto | HttpException}
      */
@@ -82,6 +84,14 @@ export class QuantamDataRetrieverController {
             Logger.log(`QuantamDataRetrieverController : stockDataLength = ${stockData.length} `);
         } else {
             Logger.log(`QuantamDataRetrieverController : stockDataLength = ${stockData.length}`);
+            const dataRetrievalJobDto = new DataRetrievalJobDto(
+                stockDataRequestDto.symbol,
+                stockDataRequestDto.exchange,
+                stockDataRequestDto.interval,
+                stockDataRequestDto.startDate,
+                stockDataRequestDto.endDate
+            );
+            this.proxyManagerService.createDataRetrievalJob(dataRetrievalJobDto);
         }
         return new StockDataResponseDto(stockDataRequestDto, stockData);
     }

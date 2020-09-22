@@ -1,5 +1,5 @@
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
-import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
+import { DataRetrievalJobDto } from "../dto/request/data-retrieval-job.dto";
 import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
 
 /***
@@ -36,8 +36,8 @@ export interface DataProxyInterface {
     fetchAPIStats(): void;
     proxyHealthCheckScheduler(): void;
     pingProxyHealth(): void;
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto>;
-    saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void>;
-    retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto>;
-    saveDailyDataToDb(symbol: string, interval: number, data: DailyBar[]): Promise<void>;
+    retrieveIntraDayData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto>;
+    saveIntraDayDataToDb(symbol: string, exchange: string, interval: number, data: IntraDayBar[]): Promise<void>;
+    retrieveDailyData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto>;
+    saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void>;
 }

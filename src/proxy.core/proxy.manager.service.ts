@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 
-import { DataRetrieverJobDto } from "../retriever/dto/request/data-retriever-job.dto";
 import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service";
+import { DataRetrievalJobDto } from "./proxies/dto/request/data-retrieval-job.dto";
 import { DataRetrieverJobResponseDto } from "./proxies/dto/response/data-retriever-job-response.dto";
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
@@ -25,13 +25,17 @@ export class ProxyManagerService implements ProxyManagerInterface {
         };
     }
 
-    createDataRetrieverJob(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+    async createDataRetrievalJob(
+        dataRetrieverJobDto: DataRetrievalJobDto
+    ): Promise<DataRetrieverJobResponseDto | HttpException> {
         // TODO: FIX this method with
-        Logger.log("dataRetrieverJobDto " + JSON.stringify(dataRetrieverJobDto));
+        Logger.log(
+            "ProxyManagerService : createDataRetrievalJob : dataRetrieverJobDto " + JSON.stringify(dataRetrieverJobDto)
+        );
 
         let proxyName: string | undefined = dataRetrieverJobDto.proxy?.toLowerCase();
         if (typeof proxyName === "string" && !this._proxyServices.hasOwnProperty(proxyName)) {
-            Logger.warn("createDataRetrieverJob : Proxy not found : HttpStatus.BAD_REQUEST");
+            Logger.warn("createDataRetrievalJob : Proxy not found : HttpStatus.BAD_REQUEST");
             throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
         } else if (proxyName === undefined) {
             // TODO: select based on current details
@@ -48,9 +52,10 @@ export class ProxyManagerService implements ProxyManagerInterface {
             }
             return new DataRetrieverJobResponseDto("001");
         } else {
-            Logger.warn("createDataRetrieverJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
+            Logger.warn("createDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);
         }
+        return new DataRetrieverJobResponseDto("001");
     }
 
     getProxies(): Record<string, DataProxyStats> {

@@ -4,7 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { StockData } from "../../../db/entity/stock.data.entity";
 import { StockDataService } from "../../../db/service/stock.data.service";
-import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
+import { DataRetrievalJobDto } from "../dto/request/data-retrieval-job.dto";
 import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
 import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
@@ -44,13 +44,14 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
             });
     }
 
-    async retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
-        const interval: number = dataRetrieverJobDto.interval;
+    async retrieveIntraDayData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto> {
+        Logger.log(`AlphaVantageService : retrieveIntraDayData: dataRetrievalJobDto=${dataRetrievalJobDto}`);
+        const interval: number = dataRetrievalJobDto.interval;
         await this._alphaVantageAPI
-            .getIntraDayData(dataRetrieverJobDto.symbol, `${interval}min`)
+            .getIntraDayData(dataRetrievalJobDto.symbol, dataRetrievalJobDto.exchange, `${interval}min`)
             .then((data: IntraDayBar[]) => {
                 Logger.log("AlphaVantageService : retrieveIntraDayData: success");
-                this.saveIntraDayDataToDb(dataRetrieverJobDto.symbol, interval, data)
+                this.saveIntraDayDataToDb(dataRetrievalJobDto.symbol, dataRetrievalJobDto.exchange, interval, data)
                     .then(() => {
                         Logger.log("AlphaVantageService : saveIntraDayDataToDb: success");
                     })
@@ -70,13 +71,14 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         return new DataRetrieverJobResponseDto("001");
     }
 
-    async saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void> {
+    async saveIntraDayDataToDb(symbol: string, exchange: string, interval: number, data: IntraDayBar[]): Promise<void> {
         Logger.log(
             `AlphaVantageService : saveIntraDayDataToDb: symbol=${symbol} interval=${interval} IntraDayBarArrayLength=${data.length}`
         );
         data.forEach((d) => {
             const stockData: StockData = new StockData(
                 symbol,
+                exchange,
                 interval,
                 d.Timestamp,
                 d.Open,
@@ -90,13 +92,14 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         });
     }
 
-    async retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
-        const interval: number = dataRetrieverJobDto.interval;
+    async retrieveDailyData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto> {
+        Logger.log(`AlphaVantageService : retrieveDailyData: dataRetrievalJobDto=${dataRetrievalJobDto}`);
+        const interval: number = dataRetrievalJobDto.interval;
         await this._alphaVantageAPI
-            .getDailyData(dataRetrieverJobDto.symbol, `${interval}min`)
+            .getDailyData(dataRetrievalJobDto.symbol, dataRetrievalJobDto.exchange, `${interval}min`)
             .then((data: DailyBar[]) => {
                 Logger.log("AlphaVantageService : retrieveDailyData: success");
-                this.saveDailyDataToDb(dataRetrieverJobDto.symbol, interval, data)
+                this.saveDailyDataToDb(dataRetrievalJobDto.symbol, dataRetrievalJobDto.exchange, interval, data)
                     .then(() => {
                         Logger.log("AlphaVantageService : saveDailyDataToDb: success");
                     })
@@ -116,13 +119,14 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         return new DataRetrieverJobResponseDto("001");
     }
 
-    async saveDailyDataToDb(symbol: string, interval: number, data: DailyBar[]): Promise<void> {
+    async saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void> {
         Logger.log(
             `AlphaVantageService : saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`
         );
         data.forEach((d) => {
             const stockData: StockData = new StockData(
                 symbol,
+                exchange,
                 interval,
                 d.Timestamp,
                 d.Open,
