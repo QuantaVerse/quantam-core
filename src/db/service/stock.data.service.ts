@@ -1,9 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Between, Repository } from "typeorm";
 import { DeleteResult } from "typeorm/query-builder/result/DeleteResult";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
+import { StockDataRequestDto } from "../../retriever/dto/request/stock-data.request.dto";
 import { StockData } from "../entity/stock.data.entity";
 
 @Injectable()
@@ -23,6 +24,19 @@ export class StockDataService {
 
     async findAll(): Promise<StockData[]> {
         return await this.stockDataRepository.find();
+    }
+
+    async fetchStockData(stockDataRequestDto: StockDataRequestDto) {
+        return await this.stockDataRepository.find({
+            where: {
+                symbol: stockDataRequestDto.symbol,
+                interval: stockDataRequestDto.interval,
+                timestamp: Between(stockDataRequestDto.startDate, stockDataRequestDto.endDate)
+            },
+            order: {
+                timestamp: 1
+            }
+        });
     }
 
     async findOne(id: string): Promise<StockData> {

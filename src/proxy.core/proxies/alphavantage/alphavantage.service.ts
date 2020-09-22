@@ -1,17 +1,20 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
+import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { StockData } from "../../../db/entity/stock.data.entity";
 import { StockDataService } from "../../../db/service/stock.data.service";
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
-import { DailyBar, DataProxyInterface, IntraDayBar } from "../proxy/data.proxy.interface";
+import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
+import { AlphavantageProxyConfig, DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";
 
 @Injectable()
 export class AlphaVantageService extends DataProxyService implements DataProxyInterface {
-    private _alphaVantageAPI;
+    private readonly _alphaVantageAPI: IAlphavantageAPI;
+    private readonly ALPHA_PROXY_CONFIG;
 
     constructor(private configService: ConfigService, private stockDataService: StockDataService) {
         super();
@@ -19,41 +22,60 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         this.API_KEY_NAME = "PROXY_APIKEY_ALPHA_VANTAGE";
         this.API_KEY = this.configService.get<string>(this.API_KEY_NAME);
 
-        this._alphaVantageAPI = new AlphaVantageAPI(this.API_KEY, "full", true);
+        this.ALPHA_PROXY_CONFIG = new AlphavantageProxyConfig(DataType.CSV, OutputSize.Full);
+        this.PROXY_CONFIG = this.ALPHA_PROXY_CONFIG;
+
+        this._alphaVantageAPI = new AlphaVantageAPI(
+            this.API_KEY,
+            this.ALPHA_PROXY_CONFIG.preferredDataType,
+            this.ALPHA_PROXY_CONFIG.preferredOutputSize,
+            true
+        );
     }
 
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
-        const interval = dataRetrieverJobDto.interval;
-        return this._alphaVantageAPI
+    pingProxyHealth(): void {
+        this._alphaVantageAPI
+            .getHealth()
+            .then(() => {
+                Logger.log("AlphaVantageService : pingProxyHealth: pinged");
+            })
+            .catch((error) => {
+                Logger.error("AlphaVantageService : pingProxyHealth: error", error);
+            });
+    }
+
+    async retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
+        const interval: number = dataRetrieverJobDto.interval;
+        await this._alphaVantageAPI
             .getIntraDayData(dataRetrieverJobDto.symbol, `${interval}min`)
             .then((data: IntraDayBar[]) => {
-                Logger.log("retrieveIntraDayData: success");
+                Logger.log("AlphaVantageService : retrieveIntraDayData: success");
                 this.saveIntraDayDataToDb(dataRetrieverJobDto.symbol, interval, data)
                     .then(() => {
-                        Logger.log("saveIntraDayDataToDb: success");
+                        Logger.log("AlphaVantageService : saveIntraDayDataToDb: success");
                     })
                     .catch((error) => {
-                        Logger.log("saveIntraDayDataToDb: failed", error);
+                        Logger.log("AlphaVantageService : saveIntraDayDataToDb: failed", error);
                     });
             })
             .catch((error) => {
                 if (error.toString().startsWith("Error:")) {
-                    Logger.warn("retrieveIntraDayData: error", error);
+                    Logger.warn("AlphaVantageService : retrieveIntraDayData: error", error);
                     throw new HttpException(error.toString(), HttpStatus.BAD_REQUEST);
                 } else {
-                    Logger.error("retrieveIntraDayData: error", error);
+                    Logger.error("AlphaVantageService : retrieveIntraDayData: error", error);
                     throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            })
-            .finally(() => {
-                return new DataRetrieverJobResponseDto("001");
             });
+        return new DataRetrieverJobResponseDto("001");
     }
 
     async saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void> {
-        Logger.log(`saveIntraDayDataToDb: symbol=${symbol} interval=${interval} IntraDayBarArrayLength=${data.length}`);
+        Logger.log(
+            `AlphaVantageService : saveIntraDayDataToDb: symbol=${symbol} interval=${interval} IntraDayBarArrayLength=${data.length}`
+        );
         data.forEach((d) => {
-            const stockData = new StockData(
+            const stockData: StockData = new StockData(
                 symbol,
                 interval,
                 d.Timestamp,
@@ -68,38 +90,38 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         });
     }
 
-    retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
-        const interval = dataRetrieverJobDto.interval;
-        return this._alphaVantageAPI
+    async retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
+        const interval: number = dataRetrieverJobDto.interval;
+        await this._alphaVantageAPI
             .getDailyData(dataRetrieverJobDto.symbol, `${interval}min`)
             .then((data: DailyBar[]) => {
-                Logger.log("retrieveDailyData: success");
+                Logger.log("AlphaVantageService : retrieveDailyData: success");
                 this.saveDailyDataToDb(dataRetrieverJobDto.symbol, interval, data)
                     .then(() => {
-                        Logger.log("saveDailyDataToDb: success");
+                        Logger.log("AlphaVantageService : saveDailyDataToDb: success");
                     })
                     .catch((error) => {
-                        Logger.log("saveDailyDataToDb: failed", error);
+                        Logger.log("AlphaVantageService : saveDailyDataToDb: failed", error);
                     });
             })
             .catch((error) => {
                 if (error.toString().startsWith("Error:")) {
-                    Logger.warn("retrieveDailyData: error", error);
+                    Logger.warn("AlphaVantageService : retrieveDailyData: error", error);
                     throw new HttpException(error.toString(), HttpStatus.BAD_REQUEST);
                 } else {
-                    Logger.error("retrieveDailyData: error", error);
+                    Logger.error("AlphaVantageService : retrieveDailyData: error", error);
                     throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
-            })
-            .finally(() => {
-                return new DataRetrieverJobResponseDto("001");
             });
+        return new DataRetrieverJobResponseDto("001");
     }
 
     async saveDailyDataToDb(symbol: string, interval: number, data: DailyBar[]): Promise<void> {
-        Logger.log(`saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`);
+        Logger.log(
+            `AlphaVantageService : saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`
+        );
         data.forEach((d) => {
-            const stockData = new StockData(
+            const stockData: StockData = new StockData(
                 symbol,
                 interval,
                 d.Timestamp,
