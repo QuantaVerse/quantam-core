@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("stock_data")
 export class StockData {
@@ -35,8 +35,11 @@ export class StockData {
     @Column()
     valid: boolean;
 
-    @Column()
+    @CreateDateColumn()
     createdTime: Date;
+
+    @UpdateDateColumn()
+    updatedTime: Date;
 
     constructor(
         symbol: string,
@@ -61,6 +64,5 @@ export class StockData {
         this.volume = volume;
         this.source = source;
         this.valid = valid;
-        this.createdTime = new Date();
     }
 }

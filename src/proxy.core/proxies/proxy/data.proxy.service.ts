@@ -3,7 +3,7 @@ import { Cron, CronExpression } from "@nestjs/schedule";
 
 import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
 import { DataRetrieverJobResponseDto } from "../../../retriever/dto/response/data-retriever-job-response.dto";
-import { DataProxyInterface, DataProxyStats, ProxyAPIStats } from "./data.proxy.interface";
+import { DataProxyInterface, DataProxyStats, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
 
 @Injectable()
 export class DataProxyService implements DataProxyInterface {
@@ -15,7 +15,10 @@ export class DataProxyService implements DataProxyInterface {
 
     constructor() {
         this.PROXY_CONFIG = {};
-        this.PROXY_API_STATS = {};
+        this.PROXY_API_STATS = {
+            status: ProxyStatus.Unknown,
+            api_hit_rate: undefined
+        };
     }
 
     getProxyStats(): DataProxyStats {
@@ -27,9 +30,9 @@ export class DataProxyService implements DataProxyInterface {
         };
     }
 
-    fetchAPIStats(): void {
-        // service call cron per 5 min
-        this.PROXY_API_STATS = {};
+    async fetchAPIStats(): Promise<ProxyAPIStats> {
+        // TODO: implement
+        return;
     }
 
     @Cron(CronExpression.EVERY_5_MINUTES)
@@ -44,7 +47,7 @@ export class DataProxyService implements DataProxyInterface {
         }
     }
 
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
         const message = `DataProxyService : retrieveIntraDayData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
@@ -56,7 +59,7 @@ export class DataProxyService implements DataProxyInterface {
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }
 
-    retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): DataRetrieverJobResponseDto {
+    retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
         const message = `DataProxyService : retrieveDailyData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);

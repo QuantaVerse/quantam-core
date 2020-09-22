@@ -41,10 +41,11 @@ export class ProxyManagerService implements ProxyManagerInterface {
         const interval: number | undefined = dataRetrieverJobDto.interval;
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
             if (interval === 1440) {
-                return this._proxyServices[proxyName].retrieveDailyData(dataRetrieverJobDto);
+                this._proxyServices[proxyName].retrieveDailyData(dataRetrieverJobDto);
             } else {
-                return this._proxyServices[proxyName].retrieveIntraDayData(dataRetrieverJobDto);
+                this._proxyServices[proxyName].retrieveIntraDayData(dataRetrieverJobDto);
             }
+            return new DataRetrieverJobResponseDto("001");
         } else {
             Logger.warn("createDataRetrieverJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);

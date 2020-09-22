@@ -1,3 +1,5 @@
+import { DailyBar, IntraDayBar } from "../proxy/data.proxy.interface";
+
 export enum OutputSize {
     Full = "full",
     Compact = "compact"
@@ -16,4 +18,10 @@ export class AlphavantageProxyConfig {
         this.preferredDataType = preferredDataType !== undefined ? preferredDataType : DataType.JSON;
         this.preferredOutputSize = preferredOutputSize !== undefined ? preferredOutputSize : OutputSize.Compact;
     }
+}
+
+export interface IAlphavantageAPI {
+    getHealth(): Promise<any>;
+    getIntraDayData(symbol: string, interval: string): Promise<IntraDayBar[]>;
+    getDailyData(symbol: string, interval: string): Promise<DailyBar[]>;
 }

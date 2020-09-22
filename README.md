@@ -26,4 +26,5 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
 - [ ] Separate dev and prod env
 - [ ] Update Readme
 - [ ] Update APISpecs
+- [ ] Fix lint issues
 

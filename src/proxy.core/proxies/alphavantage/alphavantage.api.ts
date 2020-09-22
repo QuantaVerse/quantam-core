@@ -4,10 +4,10 @@ import { fromCSV, IDataFrame } from "data-forge";
 
 import { buildUrl } from "../../../util/build.url";
 import { DailyBar, IntraDayBar } from "../proxy/data.proxy.interface";
-import { DataType, OutputSize } from "./alphavantage.interface";
+import { DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";
 
-export class AlphaVantageAPI {
-    private readonly baseUrl = "https://www.alphavantage.co";
+export class AlphaVantageAPI implements IAlphavantageAPI {
+    private readonly baseUrl: string = "https://www.alphavantage.co";
     private readonly apiKey: string;
     private readonly dataType: DataType;
     private readonly outputSize: OutputSize;
@@ -20,6 +20,7 @@ export class AlphaVantageAPI {
         this.verbose = verbose !== undefined ? verbose : false;
     }
 
+    // TODO: save all API call logs
     async getHealth(): Promise<any> {
         const symbolSearchFunction = "SYMBOL_SEARCH";
         const demoAPIKey = "demo";
