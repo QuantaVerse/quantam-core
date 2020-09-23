@@ -4,23 +4,23 @@ export class DataRetrievalJobDto {
     symbol: string;
     exchange: string;
     interval: IntervalEnum;
-    from_date: Date;
-    to_date: Date;
+    fromDate: Date;
+    toDate: Date;
     proxy?: string;
 
     constructor(
         symbol: string,
         exchange: string,
         interval: IntervalEnum,
-        from_date: Date,
-        to_date: Date,
+        fromDate: Date,
+        toDate: Date,
         proxy?: string
     ) {
         this.symbol = symbol;
         this.exchange = exchange;
         this.interval = interval;
-        this.from_date = from_date;
-        this.to_date = to_date;
+        this.fromDate = fromDate;
+        this.toDate = toDate;
         this.proxy = proxy;
     }
 }
