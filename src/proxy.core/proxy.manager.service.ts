@@ -50,12 +50,8 @@ export class ProxyManagerService implements ProxyManagerInterface {
         }
     }
 
-    async createDataRetrievalJob(
-        dataRetrievalJobDto: DataRetrievalJobDto
-    ): Promise<DataRetrievalJobResponseDto | HttpException> {
-        Logger.log(
-            `ProxyManagerService : createDataRetrievalJob : dataRetrieverJobDto ${JSON.stringify(dataRetrievalJobDto)}`
-        );
+    async createDataRetrievalJob(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto | HttpException> {
+        Logger.log(`ProxyManagerService : createDataRetrievalJob : dataRetrieverJobDto ${JSON.stringify(dataRetrievalJobDto)}`);
         await this.proxyJobLogService.createJobLogFromDataRetrievalJobDto(dataRetrievalJobDto);
 
         let proxyName: string | undefined = dataRetrievalJobDto.proxy?.toLowerCase();
@@ -72,9 +68,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
             return await this._proxyServices[proxyName].retrieveStockData(dataRetrievalJobDto);
         } else {
-            Logger.warn(
-                "ProxyManagerService : createDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST"
-            );
+            Logger.warn("ProxyManagerService : createDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);
         }
     }

@@ -14,14 +14,7 @@ import { ProxyManagerService } from "./proxy.manager.service";
 export const proxy_manager_module_metadata: ModuleMetadata = {
     imports: [StockDataModule, ProxyJobLogModule],
     controllers: [ProxyManagerController],
-    providers: [
-        ConfigService,
-        ProxyManagerService,
-        MarketStackService,
-        KiteService,
-        AlphaVantageService,
-        DataProxyService
-    ],
+    providers: [ConfigService, ProxyManagerService, MarketStackService, KiteService, AlphaVantageService, DataProxyService],
     exports: [ProxyManagerService]
 };
 

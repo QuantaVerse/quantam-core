@@ -12,10 +12,7 @@ import { QuantamDataRetrieverServiceInterface } from "./qd.retriever.interface";
  */
 @Injectable()
 export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceInterface {
-    constructor(
-        private stockDataService: StockDataService,
-        private readonly proxyManagerService: ProxyManagerService
-    ) {}
+    constructor(private stockDataService: StockDataService, private readonly proxyManagerService: ProxyManagerService) {}
 
     /**
      * @method getHealth
@@ -51,10 +48,7 @@ export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceI
      * @param sync
      * @returns {Promise<StockData[]>}
      */
-    async retrieveStockDataFromProxyManager(
-        stockDataRequestDto: StockDataRequestDto,
-        sync: boolean
-    ): Promise<StockData[]> {
+    async retrieveStockDataFromProxyManager(stockDataRequestDto: StockDataRequestDto, sync: boolean): Promise<StockData[]> {
         const dataRetrievalJobDto = new DataRetrievalJobDto(
             stockDataRequestDto.symbol,
             stockDataRequestDto.exchange,

@@ -9,15 +9,7 @@ export class DataRetrievalJobDto {
     referrer = "None";
     proxy?: string;
 
-    constructor(
-        symbol: string,
-        exchange: string,
-        interval: IntervalEnum,
-        fromDate: Date,
-        toDate: Date,
-        referrer?: string,
-        proxy?: string
-    ) {
+    constructor(symbol: string, exchange: string, interval: IntervalEnum, fromDate: Date, toDate: Date, referrer?: string, proxy?: string) {
         this.symbol = symbol;
         this.exchange = exchange;
         this.interval = interval;

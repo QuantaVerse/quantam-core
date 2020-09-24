@@ -128,9 +128,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
     }
 
     async saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void> {
-        Logger.log(
-            `AlphaVantageService : saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`
-        );
+        Logger.log(`AlphaVantageService : saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`);
         data.forEach((d) => {
             const stockData: StockData = new StockData(
                 symbol,

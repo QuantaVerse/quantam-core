@@ -22,12 +22,8 @@ export class ProxyManagerController {
     }
 
     @Post("createJob")
-    pullDataFromProxy(
-        @Body() dataRetrieverJobDto: DataRetrievalJobDto
-    ): Promise<DataRetrievalJobResponseDto | HttpException> {
-        Logger.log(
-            `ProxyManagerController : pullDataFromProxy : dataRetrieverJobDto = ${JSON.stringify(dataRetrieverJobDto)}`
-        );
+    pullDataFromProxy(@Body() dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto | HttpException> {
+        Logger.log(`ProxyManagerController : pullDataFromProxy : dataRetrieverJobDto = ${JSON.stringify(dataRetrieverJobDto)}`);
         return this.proxyManagerService.createDataRetrievalJob(dataRetrieverJobDto);
     }
 

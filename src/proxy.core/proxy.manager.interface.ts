@@ -7,7 +7,5 @@ import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 export interface ProxyManagerInterface {
     getProxies(): Record<string, DataProxyStats>;
     getProxyDetails(proxyName: string): DataProxyStats;
-    createDataRetrievalJob(
-        dataRetrieverJobDto: DataRetrievalJobDto
-    ): Promise<DataRetrievalJobResponseDto | HttpException>;
+    createDataRetrievalJob(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto | HttpException>;
 }
