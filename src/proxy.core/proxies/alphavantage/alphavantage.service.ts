@@ -3,6 +3,7 @@ import { ConfigService } from "@nestjs/config";
 
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { StockData } from "../../../db/entity/stock.data.entity";
+import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { StockDataService } from "../../../db/service/stock.data.service";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
@@ -16,8 +17,8 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
     private readonly _alphaVantageAPI: IAlphavantageAPI;
     private readonly ALPHA_PROXY_CONFIG;
 
-    constructor(private configService: ConfigService, private stockDataService: StockDataService) {
-        super();
+    constructor(private configService: ConfigService, private stockDataService: StockDataService, proxyJobLogService: ProxyJobLogService) {
+        super(proxyJobLogService);
         this.PROXY_NAME = "AlphaVantage";
         this.API_KEY_NAME = "PROXY_APIKEY_ALPHA_VANTAGE";
         this.API_KEY = this.configService.get<string>(this.API_KEY_NAME);

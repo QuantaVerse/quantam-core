@@ -30,6 +30,10 @@ export interface DataProxyStats {
     readonly api_stats: ProxyAPIStats;
 }
 
+/**
+ * @interface DataProxyInterface
+ * Used as the service interface for DataProxyService
+ */
 export interface DataProxyInterface {
     getProxyStats(): DataProxyStats;
     fetchAPIStats(): void;

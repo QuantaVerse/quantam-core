@@ -22,6 +22,9 @@ export class ProxyJobLog {
     @Column()
     toDate: Date;
 
+    @Column()
+    jobType: string;
+
     @Column({ nullable: true })
     proxy: string;
 
@@ -50,6 +53,7 @@ export class ProxyJobLog {
         fromDate: Date,
         toDate: Date,
         proxy: string,
+        jobType: string,
         proxyUsed: string = null,
         api: string = null,
         responseStatusCode: number = null,
@@ -61,6 +65,7 @@ export class ProxyJobLog {
         this.fromDate = fromDate;
         this.toDate = toDate;
         this.proxy = proxy;
+        this.jobType = jobType;
         this.proxyUsed = proxyUsed;
         this.api = api;
         this.responseStatusCode = responseStatusCode;

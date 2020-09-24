@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
+import { ProxyJobLog } from "../../../db/entity/proxy.job.log.entity";
+import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 import { DataProxyInterface, DataProxyStats, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
@@ -12,13 +14,15 @@ export class DataProxyService implements DataProxyInterface {
     protected API_KEY: string;
     protected PROXY_CONFIG: Record<string, string>;
     protected PROXY_API_STATS: ProxyAPIStats;
+    proxyJobLogService: ProxyJobLogService;
 
-    constructor() {
+    constructor(proxyJobLogService: ProxyJobLogService) {
         this.PROXY_CONFIG = {};
         this.PROXY_API_STATS = {
             status: ProxyStatus.Unknown,
             api_hit_rate: undefined
         };
+        this.proxyJobLogService = proxyJobLogService;
     }
 
     getProxyStats(): DataProxyStats {
@@ -31,7 +35,7 @@ export class DataProxyService implements DataProxyInterface {
     }
 
     async fetchAPIStats(): Promise<ProxyAPIStats> {
-        // TODO: implement
+        const proxyJobLogs: ProxyJobLog[] = await this.proxyJobLogService.findLatestProxyLogs(this.PROXY_NAME);
         return;
     }
 

@@ -28,6 +28,11 @@ export class ProxyManagerService implements ProxyManagerInterface {
         };
     }
 
+    /**
+     * @method getProxies
+     *
+     * @returns Record<string, DataProxyStats>
+     */
     getProxies(): Record<string, DataProxyStats> {
         Logger.log(`ProxyManagerService : getProxies`);
         const proxyStats: Record<string, DataProxyStats> = {};
@@ -39,6 +44,13 @@ export class ProxyManagerService implements ProxyManagerInterface {
         return proxyStats;
     }
 
+    /**
+     * @method getProxyDetails
+     *
+     * @param {string} proxyName
+     *
+     * @returns DataProxyStats
+     */
     getProxyDetails(proxyName: string): DataProxyStats {
         Logger.log(`ProxyManagerService : getProxyDetails for proxy with name='${proxyName}'`);
         if (this._proxyServices.hasOwnProperty(proxyName.toLowerCase())) {
@@ -50,19 +62,35 @@ export class ProxyManagerService implements ProxyManagerInterface {
         }
     }
 
+    /**
+     * @method createStockDataRetrievalJob
+     *
+     * Steps:
+     *
+     * 1. Validate `proxyName` if mentioned in `stockDataRetrievalJobDto`.
+     * 2. If validation failed, get a Proxy based on config and preference.
+     * 3. Validate `interval` if mentioned in `stockDataRetrievalJobDto`.
+     * 4. retrieveStockData based on selected Proxy
+     *
+     * @param {StockDataRetrievalJobDto} stockDataRetrievalJobDto
+     *
+     * @returns Promise<StockDataRetrievalJobResponseDto | HttpException>
+     */
     async createStockDataRetrievalJob(
         stockDataRetrievalJobDto: StockDataRetrievalJobDto
     ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
-        Logger.log(`ProxyManagerService : createDataRetrievalJob : stockDataRetrievalJobDto ${JSON.stringify(stockDataRetrievalJobDto)}`);
-        await this.proxyJobLogService.createJobLogFromDataRetrievalJobDto(stockDataRetrievalJobDto);
+        Logger.log(
+            `ProxyManagerService : createStockDataRetrievalJob : stockDataRetrievalJobDto ${JSON.stringify(stockDataRetrievalJobDto)}`
+        );
+        await this.proxyJobLogService.createJobLogFromStockDataRetrievalJobDto(stockDataRetrievalJobDto);
 
         let proxyName: string | undefined = stockDataRetrievalJobDto.proxy?.toLowerCase();
-        // TODO: select based on current proxyManagerStats and stockDataRetrievalJobDto
-        // TODO: select proxy preference from config
         if (typeof proxyName === "string" && !this._proxyServices.hasOwnProperty(proxyName)) {
-            Logger.warn("ProxyManagerService : createDataRetrievalJob : Proxy not found : HttpStatus.BAD_REQUEST");
+            Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Proxy not found : HttpStatus.BAD_REQUEST");
             throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
         } else if (proxyName === undefined) {
+            // TODO: select based on current proxyManagerStats and stockDataRetrievalJobDto
+            // TODO: select proxy preference from config
             proxyName = "alphavantage";
         }
 
@@ -70,7 +98,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
             return await this._proxyServices[proxyName].retrieveStockData(stockDataRetrievalJobDto);
         } else {
-            Logger.warn("ProxyManagerService : createDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
+            Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);
         }
     }

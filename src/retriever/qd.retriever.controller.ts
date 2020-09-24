@@ -8,6 +8,8 @@ import { QuantamDataRetrieverService } from "./qd.retriever.service";
 /**
  * QuantamDataRetrieverController is an injectable instance made for QuantamDataRetrieverModule.
  *
+ * API path prefix: retriever
+ *
  * APIs available:
  * 1. /GET health
  * 2. /GET fetchStockData
@@ -17,7 +19,7 @@ export class QuantamDataRetrieverController {
     constructor(private readonly dataRetrieverService: QuantamDataRetrieverService) {}
 
     /**
-     * Health api for Quantam Data Retriever module.
+     * API Endpoint for checking health of Quantam Data Retriever module.
      * Used for fetching current status of the module.
      *
      * @return {Record<string, string>}

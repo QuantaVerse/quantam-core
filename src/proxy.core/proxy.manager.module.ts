@@ -18,5 +18,20 @@ export const proxy_manager_module_metadata: ModuleMetadata = {
     exports: [ProxyManagerService]
 };
 
+/**
+ * @module ProxyManagerModule
+ * This module is imported in the QuantamCoreModule
+ *
+ *
+ * ModuleMetadata:
+ *
+ * imports: [StockDataModule, ProxyJobLogModule]
+ *
+ * controllers: [ProxyManagerController]
+ *
+ * providers: [ConfigService, ProxyManagerService, MarketStackService, KiteService, AlphaVantageService, DataProxyService]
+ *
+ * exports: [ProxyManagerService]
+ */
 @Module(proxy_manager_module_metadata)
 export class ProxyManagerModule {}

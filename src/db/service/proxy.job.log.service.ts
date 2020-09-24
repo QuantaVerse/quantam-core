@@ -17,26 +17,27 @@ export class ProxyJobLogService {
         return await this.proxyJobLogRepository.insert(proxyJobLog);
     }
 
-    async findByProxyName(proxyName: string): Promise<ProxyJobLog[]> {
+    async findLatestProxyLogs(proxyName: string): Promise<ProxyJobLog[]> {
         return await this.proxyJobLogRepository.find({
             where: {
                 proxyUsed: proxyName
             },
             order: {
-                createdAt: -1
+                updatedAt: -1
             },
             take: 20
         });
     }
 
-    async createJobLogFromDataRetrievalJobDto(stockDataRetrievalJobDto: StockDataRetrievalJobDto) {
+    async createJobLogFromStockDataRetrievalJobDto(stockDataRetrievalJobDto: StockDataRetrievalJobDto) {
         const proxyJobLog: ProxyJobLog = new ProxyJobLog(
             stockDataRetrievalJobDto.symbol,
             stockDataRetrievalJobDto.exchange,
             stockDataRetrievalJobDto.interval,
             stockDataRetrievalJobDto.fromDate,
             stockDataRetrievalJobDto.toDate,
-            stockDataRetrievalJobDto.proxy
+            stockDataRetrievalJobDto.proxy,
+            "StockDataRetrievalJob"
         );
         await this.create(proxyJobLog);
     }
