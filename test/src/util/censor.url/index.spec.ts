@@ -1,4 +1,4 @@
-import { expect, test } from "@jest/globals";
+import { describe, expect, test } from "@jest/globals";
 
 import { censorAPI } from "../../../../src/util/censor.url";
 

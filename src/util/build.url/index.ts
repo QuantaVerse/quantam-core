@@ -3,6 +3,16 @@ interface BuildUrlOptions {
     queryParams?: { [name: string]: string | string[] };
 }
 
+/**
+ * @function buildUrl
+ *
+ * Build URL from url and options
+ *
+ * @param {string} url - URL string
+ * @param {BuildUrlOptions} options - path and query params to be pushed in the URL
+ *
+ * @returns string
+ */
 export function buildUrl(url: string, options?: BuildUrlOptions): string {
     let uri: string = url;
     if (options) {
