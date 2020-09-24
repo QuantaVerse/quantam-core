@@ -39,5 +39,5 @@ export interface DataProxyInterface {
     fetchAPIStats(): void;
     proxyHealthCheckScheduler(): Promise<any>;
     pingProxyHealth(): Promise<any>;
-    retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto>;
+    retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto>;
 }

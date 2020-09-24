@@ -38,8 +38,8 @@ export class DataProxyService implements DataProxyInterface {
 
     async fetchAPIStats(): Promise<ProxyAPIStats> {
         const proxyJobLogs: ProxyJobLog[] = await this.proxyJobLogService.findLatestProxyLogs(this.PROXY_NAME);
-        const logsCount = proxyJobLogs.length;
-        const successfulAPICount = proxyJobLogs.reduce((acc, log) => {
+        const logsCount: number = proxyJobLogs.length;
+        const successfulAPICount = proxyJobLogs.reduce((acc: number, log: ProxyJobLog) => {
             return acc + (log?.responseStatusCode >= 200 && log?.responseStatusCode < 300 ? 1 : 0);
         }, 0);
         let hitRate: number | null = null;
@@ -64,7 +64,7 @@ export class DataProxyService implements DataProxyInterface {
         };
     }
 
-    @Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron(CronExpression.EVERY_5_MINUTES)
     async proxyHealthCheckScheduler(): Promise<any> {
         return await this.pingProxyHealth()
             .then((response) => {
@@ -102,7 +102,10 @@ export class DataProxyService implements DataProxyInterface {
         return null;
     }
 
-    async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto> {
+    async retrieveStockData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
         const message = `DataProxyService : retrieveStockData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);

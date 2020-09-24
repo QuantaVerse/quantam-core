@@ -1,6 +1,8 @@
 import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
-import { IntervalEnum } from "../../common/interfaces/data.interface";
+import { censorAPI } from "../../util/censor.url";
+
+const API_KEY_FIELDS: string[] = ["apikey"];
 
 @Entity("proxy_job_log")
 export class ProxyJobLog {
@@ -31,7 +33,7 @@ export class ProxyJobLog {
     constructor(proxy: string, jobType: string, api: string = null, responseStatusCode = 0, message: string = null) {
         this.proxy = proxy;
         this.jobType = jobType;
-        this.api = api;
+        this.api = api != null ? censorAPI(api, API_KEY_FIELDS) : null;
         this.responseStatusCode = responseStatusCode;
         this.message = message;
     }

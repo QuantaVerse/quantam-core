@@ -68,35 +68,44 @@ export class ProxyManagerService implements ProxyManagerInterface {
      * Steps:
      *
      * 1. Validate `proxyName` if mentioned in `stockDataRetrievalJobDto`.
-     * 2. If validation failed, get a Proxy based on config and preference.
+     * When `proxyName` is mentioned, this method will use strategy pattern.
+     * 2. If validation failed or `proxyName` is not mentioned, get a Proxy based on config and preference.
+     * When `proxyName` is not mentioned, this method will use chain of responsibility pattern.
      * 3. Validate `interval` if mentioned in `stockDataRetrievalJobDto`.
      * 4. retrieveStockData based on selected Proxy
      *
-     * @param {StockDataRetrievalJobDto} stockDataRetrievalJobDto
+     * @param {StockDataRetrievalJobDto} jobDto
      *
      * @returns Promise<StockDataRetrievalJobResponseDto | HttpException>
      */
-    async createStockDataRetrievalJob(
-        stockDataRetrievalJobDto: StockDataRetrievalJobDto
-    ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
-        Logger.log(
-            `ProxyManagerService : createStockDataRetrievalJob : stockDataRetrievalJobDto ${JSON.stringify(stockDataRetrievalJobDto)}`
-        );
-        await this.proxyJobLogService.createJobLogFromStockDataRetrievalJobDto(stockDataRetrievalJobDto);
+    async createStockDataRetrievalJob(jobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto | HttpException> {
+        Logger.log(`ProxyManagerService : createStockDataRetrievalJob : stockDataRetrievalJobDto ${JSON.stringify(jobDto)}`);
 
-        let proxyName: string | undefined = stockDataRetrievalJobDto.proxy?.toLowerCase();
+        let proxyName: string | undefined = jobDto.proxy?.toLowerCase();
         if (typeof proxyName === "string" && !this._proxyServices.hasOwnProperty(proxyName)) {
             Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Proxy not found : HttpStatus.BAD_REQUEST");
             throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
         } else if (proxyName === undefined) {
             // TODO: select based on current proxyManagerStats and stockDataRetrievalJobDto
-            // TODO: select proxy preference from config
+            // TODO: select proxy preference from config (this method will use chain of responsibility pattern)
             proxyName = "alphavantage";
         }
 
-        const interval: IntervalEnum | undefined = stockDataRetrievalJobDto.interval;
+        const jobDtoWithProxy = new StockDataRetrievalJobDto(
+            jobDto.symbol,
+            jobDto.exchange,
+            jobDto.interval,
+            jobDto.fromDate,
+            jobDto.toDate,
+            jobDto.referrer,
+            proxyName
+        );
+        const result = await this.proxyJobLogService.createJobLogFromStockDataRetrievalJobDto(jobDtoWithProxy);
+        const jobId: number | null = result?.identifiers?.length ? result.identifiers[0]?.id : null;
+
+        const interval: IntervalEnum | undefined = jobDto.interval;
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
-            return await this._proxyServices[proxyName].retrieveStockData(stockDataRetrievalJobDto);
+            return await this._proxyServices[proxyName].retrieveStockData(jobDtoWithProxy, jobId);
         } else {
             Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);

@@ -39,16 +39,23 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         return this._alphaVantageAPI.getHealth();
     }
 
-    async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto> {
+    async retrieveStockData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
         if (stockDataRetrievalJobDto.interval >= 1440) {
-            return await this.retrieveDailyData(stockDataRetrievalJobDto);
+            return await this.retrieveDailyData(stockDataRetrievalJobDto, jobId);
         } else {
-            return await this.retrieveIntraDayData(stockDataRetrievalJobDto);
+            return await this.retrieveIntraDayData(stockDataRetrievalJobDto, jobId);
         }
     }
 
-    async retrieveIntraDayData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto> {
-        Logger.log(`AlphaVantageService : retrieveIntraDayData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto}`);
+    async retrieveIntraDayData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
+        // TODO: Use jobId to update the job status
+        Logger.log(`AlphaVantageService : retrieveIntraDayData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto} jobId=${jobId}`);
         const interval: number = stockDataRetrievalJobDto.interval;
         await this._alphaVantageAPI
             .getIntraDayData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, `${interval}min`)
@@ -95,8 +102,12 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         });
     }
 
-    async retrieveDailyData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto> {
-        Logger.log(`AlphaVantageService : retrieveDailyData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto}`);
+    async retrieveDailyData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
+        // TODO: Use jobId to update the job status
+        Logger.log(`AlphaVantageService : retrieveDailyData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto} jobId=${jobId}`);
         const interval: number = stockDataRetrievalJobDto.interval;
         await this._alphaVantageAPI
             .getDailyData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, `${interval}min`)
