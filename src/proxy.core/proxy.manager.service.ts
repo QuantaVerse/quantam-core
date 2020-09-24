@@ -2,8 +2,8 @@ import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 
 import { IntervalEnum } from "../common/interfaces/data.interface";
 import { ProxyJobLogService } from "../db/service/proxy.job.log.service";
-import { DataRetrievalJobDto } from "./dto/request/data-retrieval-job.dto";
-import { DataRetrievalJobResponseDto } from "./dto/response/data-retrieval-job-response.dto";
+import { StockDataRetrievalJobDto } from "./dto/request/stock-data-retrieval-job.dto";
+import { StockDataRetrievalJobResponseDto } from "./dto/response/stock-data-retrieval-job-response.dto";
 import { AlphaVantageService } from "./proxies/alphavantage/alphavantage.service";
 import { KiteService } from "./proxies/kite/kite.service";
 import { MarketStackService } from "./proxies/marketstack/marketstack.service";
@@ -50,12 +50,14 @@ export class ProxyManagerService implements ProxyManagerInterface {
         }
     }
 
-    async createDataRetrievalJob(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto | HttpException> {
-        Logger.log(`ProxyManagerService : createDataRetrievalJob : dataRetrieverJobDto ${JSON.stringify(dataRetrievalJobDto)}`);
-        await this.proxyJobLogService.createJobLogFromDataRetrievalJobDto(dataRetrievalJobDto);
+    async createStockDataRetrievalJob(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto
+    ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
+        Logger.log(`ProxyManagerService : createDataRetrievalJob : stockDataRetrievalJobDto ${JSON.stringify(stockDataRetrievalJobDto)}`);
+        await this.proxyJobLogService.createJobLogFromDataRetrievalJobDto(stockDataRetrievalJobDto);
 
-        let proxyName: string | undefined = dataRetrievalJobDto.proxy?.toLowerCase();
-        // TODO: select based on current proxyManagerStats and dataRetrievalJobDto
+        let proxyName: string | undefined = stockDataRetrievalJobDto.proxy?.toLowerCase();
+        // TODO: select based on current proxyManagerStats and stockDataRetrievalJobDto
         // TODO: select proxy preference from config
         if (typeof proxyName === "string" && !this._proxyServices.hasOwnProperty(proxyName)) {
             Logger.warn("ProxyManagerService : createDataRetrievalJob : Proxy not found : HttpStatus.BAD_REQUEST");
@@ -64,9 +66,9 @@ export class ProxyManagerService implements ProxyManagerInterface {
             proxyName = "alphavantage";
         }
 
-        const interval: IntervalEnum | undefined = dataRetrievalJobDto.interval;
+        const interval: IntervalEnum | undefined = stockDataRetrievalJobDto.interval;
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
-            return await this._proxyServices[proxyName].retrieveStockData(dataRetrievalJobDto);
+            return await this._proxyServices[proxyName].retrieveStockData(stockDataRetrievalJobDto);
         } else {
             Logger.warn("ProxyManagerService : createDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);

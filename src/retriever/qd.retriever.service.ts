@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 
 import { StockData } from "../db/entity/stock.data.entity";
 import { StockDataService } from "../db/service/stock.data.service";
-import { DataRetrievalJobDto } from "../proxy.core/dto/request/data-retrieval-job.dto";
+import { StockDataRetrievalJobDto } from "../proxy.core/dto/request/stock-data-retrieval-job.dto";
 import { ProxyManagerService } from "../proxy.core/proxy.manager.service";
 import { StockDataRequestDto } from "./dto/request/stock-data.request.dto";
 import { QuantamDataRetrieverServiceInterface } from "./qd.retriever.interface";
@@ -49,7 +49,7 @@ export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceI
      * @returns {Promise<StockData[]>}
      */
     async retrieveStockDataFromProxyManager(stockDataRequestDto: StockDataRequestDto, sync: boolean): Promise<StockData[]> {
-        const dataRetrievalJobDto = new DataRetrievalJobDto(
+        const stockDataRetrievalJobDto = new StockDataRetrievalJobDto(
             stockDataRequestDto.symbol,
             stockDataRequestDto.exchange,
             stockDataRequestDto.interval,
@@ -64,11 +64,11 @@ export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceI
         );
         let stockData: StockData[] = [];
         if (sync) {
-            await this.proxyManagerService.createDataRetrievalJob(dataRetrievalJobDto);
+            await this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto);
             Logger.log(`QuantamDataRetrieverService : DataRetrieval request completed`);
             stockData = await this.fetchStockData(stockDataRequestDto);
         } else {
-            this.proxyManagerService.createDataRetrievalJob(dataRetrievalJobDto).then(() => {
+            this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto).then(() => {
                 Logger.log(`QuantamDataRetrieverService : DataRetrieval request completed`);
             });
         }

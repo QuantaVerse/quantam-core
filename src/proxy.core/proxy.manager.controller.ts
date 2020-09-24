@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpException, Logger, Param, Post } from "@nestjs/common";
 
-import { DataRetrievalJobDto } from "./dto/request/data-retrieval-job.dto";
-import { DataRetrievalJobResponseDto } from "./dto/response/data-retrieval-job-response.dto";
+import { StockDataRetrievalJobDto } from "./dto/request/stock-data-retrieval-job.dto";
+import { StockDataRetrievalJobResponseDto } from "./dto/response/stock-data-retrieval-job-response.dto";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
 import { ProxyManagerService } from "./proxy.manager.service";
 
@@ -22,9 +22,11 @@ export class ProxyManagerController {
     }
 
     @Post("createJob")
-    pullDataFromProxy(@Body() dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto | HttpException> {
-        Logger.log(`ProxyManagerController : pullDataFromProxy : dataRetrieverJobDto = ${JSON.stringify(dataRetrieverJobDto)}`);
-        return this.proxyManagerService.createDataRetrievalJob(dataRetrieverJobDto);
+    pullDataFromProxy(
+        @Body() stockDataRetrievalJobDto: StockDataRetrievalJobDto
+    ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
+        Logger.log(`ProxyManagerController : pullDataFromProxy : stockDataRetrievalJobDto = ${JSON.stringify(stockDataRetrievalJobDto)}`);
+        return this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto);
     }
 
     // TODO: jobs apis

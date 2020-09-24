@@ -1,4 +1,4 @@
-export class DataRetrievalJobResponseDto {
+export class StockDataRetrievalJobResponseDto {
     jobId: string;
 
     constructor(jobId: string) {

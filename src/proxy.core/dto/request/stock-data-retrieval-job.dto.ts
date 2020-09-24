@@ -1,6 +1,6 @@
 import { IntervalEnum } from "../../../common/interfaces/data.interface";
 
-export class DataRetrievalJobDto {
+export class StockDataRetrievalJobDto {
     symbol: string;
     exchange: string;
     interval: IntervalEnum;

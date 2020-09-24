@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
-import { DataRetrievalJobDto } from "../../dto/request/data-retrieval-job.dto";
-import { DataRetrievalJobResponseDto } from "../../dto/response/data-retrieval-job-response.dto";
+import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
+import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 import { DataProxyInterface, DataProxyStats, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
 
 @Injectable()
@@ -47,7 +47,7 @@ export class DataProxyService implements DataProxyInterface {
         }
     }
 
-    async retrieveStockData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto> {
+    async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto> {
         const message = `DataProxyService : retrieveStockData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);

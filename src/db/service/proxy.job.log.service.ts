@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
-import { DataRetrievalJobDto } from "../../proxy.core/dto/request/data-retrieval-job.dto";
+import { StockDataRetrievalJobDto } from "../../proxy.core/dto/request/stock-data-retrieval-job.dto";
 import { ProxyJobLog } from "../entity/proxy.job.log.entity";
 
 @Injectable()
@@ -29,14 +29,14 @@ export class ProxyJobLogService {
         });
     }
 
-    async createJobLogFromDataRetrievalJobDto(dataRetrieverJobDto: DataRetrievalJobDto) {
+    async createJobLogFromDataRetrievalJobDto(stockDataRetrievalJobDto: StockDataRetrievalJobDto) {
         const proxyJobLog: ProxyJobLog = new ProxyJobLog(
-            dataRetrieverJobDto.symbol,
-            dataRetrieverJobDto.exchange,
-            dataRetrieverJobDto.interval,
-            dataRetrieverJobDto.fromDate,
-            dataRetrieverJobDto.toDate,
-            dataRetrieverJobDto.proxy
+            stockDataRetrievalJobDto.symbol,
+            stockDataRetrievalJobDto.exchange,
+            stockDataRetrievalJobDto.interval,
+            stockDataRetrievalJobDto.fromDate,
+            stockDataRetrievalJobDto.toDate,
+            stockDataRetrievalJobDto.proxy
         );
         await this.create(proxyJobLog);
     }

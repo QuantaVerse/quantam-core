@@ -1,6 +1,5 @@
-import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
-import { DataRetrievalJobDto } from "../../dto/request/data-retrieval-job.dto";
-import { DataRetrievalJobResponseDto } from "../../dto/response/data-retrieval-job-response.dto";
+import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
+import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 
 /***
  * Defining the status of proxy based on previous API calls
@@ -36,5 +35,5 @@ export interface DataProxyInterface {
     fetchAPIStats(): void;
     proxyHealthCheckScheduler(): void;
     pingProxyHealth(): void;
-    retrieveStockData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto>;
+    retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto>;
 }
