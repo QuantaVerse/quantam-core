@@ -23,12 +23,12 @@ export class ProxyManagerController {
     /**
      * API Endpoint for fetching proxyStats of all registered proxies
      *
-     * @returns Record<string, DataProxyStats>
+     * @returns Promise<Record<string, DataProxyStats>>
      */
     @Get(["stats"])
-    getProxies(): Record<string, DataProxyStats> {
+    async getProxies(): Promise<Record<string, DataProxyStats>> {
         Logger.log(`ProxyManagerController : getProxies`);
-        return this.proxyManagerService.getProxies();
+        return await this.proxyManagerService.getProxies();
     }
 
     /**
@@ -36,12 +36,12 @@ export class ProxyManagerController {
      *
      * @param {string} name - Name of the proxy
      *
-     * @returns DataProxyStats
+     * @returns Promise<DataProxyStats | HttpException>
      */
     @Get("stats/:name")
-    getProxyDetails(@Param("name") name: string): DataProxyStats {
+    async getProxyDetails(@Param("name") name: string): Promise<DataProxyStats | HttpException> {
         Logger.log(`ProxyManagerController : getProxyDetails name='${name}'`);
-        return this.proxyManagerService.getProxyDetails(`${name}`);
+        return await this.proxyManagerService.getProxyDetails(`${name}`);
     }
 
     /**
@@ -49,14 +49,14 @@ export class ProxyManagerController {
      *
      * @param {StockDataRetrievalJobDto} stockDataRetrievalJobDto
      *
-     * @returns DataProxyStats
+     * @returns Promise<StockDataRetrievalJobResponseDto | HttpException>
      */
     @Post("createJob")
-    pullDataFromProxy(
+    async pullDataFromProxy(
         @Body() stockDataRetrievalJobDto: StockDataRetrievalJobDto
     ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
         Logger.log(`ProxyManagerController : pullDataFromProxy : stockDataRetrievalJobDto = ${JSON.stringify(stockDataRetrievalJobDto)}`);
-        return this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto);
+        return await this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto);
     }
 
     // TODO: jobs apis

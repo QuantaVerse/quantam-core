@@ -20,7 +20,7 @@ export enum ProxyStatus {
 
 export interface ProxyAPIStats {
     status: ProxyStatus;
-    api_hit_rate: number | undefined;
+    api_hit_rate: number | null;
 }
 
 export interface DataProxyStats {
@@ -35,9 +35,9 @@ export interface DataProxyStats {
  * Used as the service interface for DataProxyService
  */
 export interface DataProxyInterface {
-    getProxyStats(): DataProxyStats;
+    getProxyStats(): Promise<DataProxyStats>;
     fetchAPIStats(): void;
-    proxyHealthCheckScheduler(): void;
-    pingProxyHealth(): void;
+    proxyHealthCheckScheduler(): Promise<any>;
+    pingProxyHealth(): Promise<any>;
     retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto>;
 }

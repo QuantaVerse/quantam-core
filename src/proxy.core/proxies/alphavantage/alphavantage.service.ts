@@ -27,6 +27,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         this.PROXY_CONFIG = this.ALPHA_PROXY_CONFIG;
 
         this._alphaVantageAPI = new AlphaVantageAPI(
+            proxyJobLogService,
             this.API_KEY,
             this.ALPHA_PROXY_CONFIG.preferredDataType,
             this.ALPHA_PROXY_CONFIG.preferredOutputSize,
@@ -34,15 +35,8 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         );
     }
 
-    pingProxyHealth(): void {
-        this._alphaVantageAPI
-            .getHealth()
-            .then(() => {
-                Logger.log("AlphaVantageService : pingProxyHealth: pinged");
-            })
-            .catch((error) => {
-                Logger.error("AlphaVantageService : pingProxyHealth: error", error);
-            });
+    pingProxyHealth(): Promise<any> {
+        return this._alphaVantageAPI.getHealth();
     }
 
     async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto> {

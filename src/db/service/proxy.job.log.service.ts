@@ -4,6 +4,7 @@ import { Repository } from "typeorm";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
 import { StockDataRetrievalJobDto } from "../../proxy.core/dto/request/stock-data-retrieval-job.dto";
+import { JobTypeEnum } from "../../proxy.core/proxy.manager.interface";
 import { ProxyJobLog } from "../entity/proxy.job.log.entity";
 
 @Injectable()
@@ -20,7 +21,7 @@ export class ProxyJobLogService {
     async findLatestProxyLogs(proxyName: string): Promise<ProxyJobLog[]> {
         return await this.proxyJobLogRepository.find({
             where: {
-                proxyUsed: proxyName
+                proxy: proxyName
             },
             order: {
                 updatedAt: -1
@@ -29,16 +30,19 @@ export class ProxyJobLogService {
         });
     }
 
-    async createJobLogFromStockDataRetrievalJobDto(stockDataRetrievalJobDto: StockDataRetrievalJobDto) {
-        const proxyJobLog: ProxyJobLog = new ProxyJobLog(
-            stockDataRetrievalJobDto.symbol,
-            stockDataRetrievalJobDto.exchange,
-            stockDataRetrievalJobDto.interval,
-            stockDataRetrievalJobDto.fromDate,
-            stockDataRetrievalJobDto.toDate,
-            stockDataRetrievalJobDto.proxy,
-            "StockDataRetrievalJob"
-        );
-        await this.create(proxyJobLog);
+    async createJobLogFromProxyAndJobType(
+        proxy: string,
+        jobType: JobTypeEnum,
+        api: string,
+        responseStatusCode: number,
+        message: string
+    ): Promise<InsertResult> {
+        const proxyJobLog: ProxyJobLog = new ProxyJobLog(proxy, jobType, api, responseStatusCode, message);
+        return await this.create(proxyJobLog);
+    }
+
+    async createJobLogFromStockDataRetrievalJobDto(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<InsertResult> {
+        const proxyJobLog: ProxyJobLog = new ProxyJobLog(stockDataRetrievalJobDto.proxy, JobTypeEnum.STOCK_DATA_RETRIEVAL_JOB);
+        return await this.create(proxyJobLog);
     }
 }

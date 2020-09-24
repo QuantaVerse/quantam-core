@@ -8,33 +8,15 @@ export class ProxyJobLog {
     id: number;
 
     @Column()
-    symbol: string;
-
-    @Column()
-    exchange: string;
-
-    @Column()
-    interval: IntervalEnum;
-
-    @Column()
-    fromDate: Date;
-
-    @Column()
-    toDate: Date;
+    proxy: string;
 
     @Column()
     jobType: string;
 
     @Column({ nullable: true })
-    proxy: string;
-
-    @Column({ nullable: true })
-    proxyUsed: string;
-
-    @Column({ nullable: true })
     api: string;
 
-    @Column({ nullable: true })
+    @Column()
     responseStatusCode: number;
 
     @Column({ nullable: true })
@@ -46,27 +28,9 @@ export class ProxyJobLog {
     @UpdateDateColumn()
     updatedAt: Date;
 
-    constructor(
-        symbol: string,
-        exchange: string,
-        interval: IntervalEnum,
-        fromDate: Date,
-        toDate: Date,
-        proxy: string,
-        jobType: string,
-        proxyUsed: string = null,
-        api: string = null,
-        responseStatusCode: number = null,
-        message: string = null
-    ) {
-        this.symbol = symbol;
-        this.exchange = exchange;
-        this.interval = interval;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
+    constructor(proxy: string, jobType: string, api: string = null, responseStatusCode = 0, message: string = null) {
         this.proxy = proxy;
         this.jobType = jobType;
-        this.proxyUsed = proxyUsed;
         this.api = api;
         this.responseStatusCode = responseStatusCode;
         this.message = message;

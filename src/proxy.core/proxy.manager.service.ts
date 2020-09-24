@@ -31,14 +31,14 @@ export class ProxyManagerService implements ProxyManagerInterface {
     /**
      * @method getProxies
      *
-     * @returns Record<string, DataProxyStats>
+     * @returns Promise<Record<string, DataProxyStats>>
      */
-    getProxies(): Record<string, DataProxyStats> {
+    async getProxies(): Promise<Record<string, DataProxyStats>> {
         Logger.log(`ProxyManagerService : getProxies`);
         const proxyStats: Record<string, DataProxyStats> = {};
         for (const proxyName in this._proxyServices) {
             if (this._proxyServices.hasOwnProperty(proxyName)) {
-                proxyStats[proxyName] = this._proxyServices[proxyName].getProxyStats();
+                proxyStats[proxyName] = await this._proxyServices[proxyName].getProxyStats();
             }
         }
         return proxyStats;
@@ -49,12 +49,12 @@ export class ProxyManagerService implements ProxyManagerInterface {
      *
      * @param {string} proxyName
      *
-     * @returns DataProxyStats
+     * @returns Promise<DataProxyStats | HttpException>
      */
-    getProxyDetails(proxyName: string): DataProxyStats {
+    async getProxyDetails(proxyName: string): Promise<DataProxyStats | HttpException> {
         Logger.log(`ProxyManagerService : getProxyDetails for proxy with name='${proxyName}'`);
         if (this._proxyServices.hasOwnProperty(proxyName.toLowerCase())) {
-            return this._proxyServices[proxyName.toLowerCase()].getProxyStats();
+            return await this._proxyServices[proxyName.toLowerCase()].getProxyStats();
         } else {
             const message = `ProxyManagerService : getProxyDetails : Proxy with name '${proxyName.toLowerCase()}' not found`;
             Logger.warn(`getProxyDetails : ${message} : HttpStatus.BAD_REQUEST`);
