@@ -1,4 +1,4 @@
-import { IntervalEnum } from "../../../../common/interfaces/data.interface";
+import { IntervalEnum } from "../../../common/interfaces/data.interface";
 
 export class DataRetrievalJobDto {
     symbol: string;
@@ -6,6 +6,7 @@ export class DataRetrievalJobDto {
     interval: IntervalEnum;
     fromDate: Date;
     toDate: Date;
+    referrer = "None";
     proxy?: string;
 
     constructor(
@@ -14,6 +15,7 @@ export class DataRetrievalJobDto {
         interval: IntervalEnum,
         fromDate: Date,
         toDate: Date,
+        referrer?: string,
         proxy?: string
     ) {
         this.symbol = symbol;
@@ -21,6 +23,7 @@ export class DataRetrievalJobDto {
         this.interval = interval;
         this.fromDate = fromDate;
         this.toDate = toDate;
+        this.referrer = referrer;
         this.proxy = proxy;
     }
 }

@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Logger } from "@nestjs/common";
 
 import { QuantamCoreService } from "./quantam.core.service";
 
@@ -22,6 +22,7 @@ export class QuantamCoreController {
      */
     @Get("health")
     getHealth(): Record<string, string> {
+        Logger.log(`QuantamCoreController : getHealth`);
         return this.coreService.getQuantamCoreStatus();
     }
 }

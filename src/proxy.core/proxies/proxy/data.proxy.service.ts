@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
-import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
-import { DataRetrievalJobDto } from "../dto/request/data-retrieval-job.dto";
-import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { DataRetrievalJobDto } from "../../dto/request/data-retrieval-job.dto";
+import { DataRetrievalJobResponseDto } from "../../dto/response/data-retrieval-job-response.dto";
 import { DataProxyInterface, DataProxyStats, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
 
 @Injectable()
@@ -48,26 +47,8 @@ export class DataProxyService implements DataProxyInterface {
         }
     }
 
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto> {
-        const message = `DataProxyService : retrieveIntraDayData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
-        Logger.warn(message);
-        throw new HttpException(message, HttpStatus.BAD_REQUEST);
-    }
-
-    async saveIntraDayDataToDb(symbol: string, exchange: string, interval: number, data: IntraDayBar[]): Promise<void> {
-        const message = `DataProxyService : saveIntraDayDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
-        Logger.warn(message);
-        throw new HttpException(message, HttpStatus.BAD_REQUEST);
-    }
-
-    retrieveDailyData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto> {
-        const message = `DataProxyService : retrieveDailyData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
-        Logger.warn(message);
-        throw new HttpException(message, HttpStatus.BAD_REQUEST);
-    }
-
-    async saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void> {
-        const message = `DataProxyService : saveDailyDataToDb : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
+    async retrieveStockData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto> {
+        const message = `DataProxyService : retrieveStockData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
     }

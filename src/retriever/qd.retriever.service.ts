@@ -2,7 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 
 import { StockData } from "../db/entity/stock.data.entity";
 import { StockDataService } from "../db/service/stock.data.service";
-import { DataRetrievalJobDto } from "../proxy.core/proxies/dto/request/data-retrieval-job.dto";
+import { DataRetrievalJobDto } from "../proxy.core/dto/request/data-retrieval-job.dto";
 import { ProxyManagerService } from "../proxy.core/proxy.manager.service";
 import { StockDataRequestDto } from "./dto/request/stock-data.request.dto";
 import { QuantamDataRetrieverServiceInterface } from "./qd.retriever.interface";
@@ -60,7 +60,8 @@ export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceI
             stockDataRequestDto.exchange,
             stockDataRequestDto.interval,
             stockDataRequestDto.startDate,
-            stockDataRequestDto.endDate
+            stockDataRequestDto.endDate,
+            "QuantamDataRetrieverService"
         );
         Logger.log(
             `QuantamDataRetrieverService : retrieve StockData from ProxyManager : stockDataRequestDto=${JSON.stringify(

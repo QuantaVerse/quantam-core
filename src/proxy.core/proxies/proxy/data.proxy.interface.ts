@@ -1,6 +1,6 @@
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
-import { DataRetrievalJobDto } from "../dto/request/data-retrieval-job.dto";
-import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { DataRetrievalJobDto } from "../../dto/request/data-retrieval-job.dto";
+import { DataRetrievalJobResponseDto } from "../../dto/response/data-retrieval-job-response.dto";
 
 /***
  * Defining the status of proxy based on previous API calls
@@ -36,8 +36,5 @@ export interface DataProxyInterface {
     fetchAPIStats(): void;
     proxyHealthCheckScheduler(): void;
     pingProxyHealth(): void;
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto>;
-    saveIntraDayDataToDb(symbol: string, exchange: string, interval: number, data: IntraDayBar[]): Promise<void>;
-    retrieveDailyData(dataRetrieverJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto>;
-    saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void>;
+    retrieveStockData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto>;
 }

@@ -4,8 +4,8 @@ import { ConfigService } from "@nestjs/config";
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { StockData } from "../../../db/entity/stock.data.entity";
 import { StockDataService } from "../../../db/service/stock.data.service";
-import { DataRetrievalJobDto } from "../dto/request/data-retrieval-job.dto";
-import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { DataRetrievalJobDto } from "../../dto/request/data-retrieval-job.dto";
+import { DataRetrievalJobResponseDto } from "../../dto/response/data-retrieval-job-response.dto";
 import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
@@ -44,7 +44,15 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
             });
     }
 
-    async retrieveIntraDayData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto> {
+    async retrieveStockData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto> {
+        if (dataRetrievalJobDto.interval >= 1440) {
+            return await this.retrieveDailyData(dataRetrievalJobDto);
+        } else {
+            return await this.retrieveIntraDayData(dataRetrievalJobDto);
+        }
+    }
+
+    async retrieveIntraDayData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto> {
         Logger.log(`AlphaVantageService : retrieveIntraDayData: dataRetrievalJobDto=${dataRetrievalJobDto}`);
         const interval: number = dataRetrievalJobDto.interval;
         await this._alphaVantageAPI
@@ -68,7 +76,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
                     throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             });
-        return new DataRetrieverJobResponseDto("001");
+        return new DataRetrievalJobResponseDto("001");
     }
 
     async saveIntraDayDataToDb(symbol: string, exchange: string, interval: number, data: IntraDayBar[]): Promise<void> {
@@ -92,7 +100,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         });
     }
 
-    async retrieveDailyData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrieverJobResponseDto> {
+    async retrieveDailyData(dataRetrievalJobDto: DataRetrievalJobDto): Promise<DataRetrievalJobResponseDto> {
         Logger.log(`AlphaVantageService : retrieveDailyData: dataRetrievalJobDto=${dataRetrievalJobDto}`);
         const interval: number = dataRetrievalJobDto.interval;
         await this._alphaVantageAPI
@@ -116,7 +124,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
                     throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             });
-        return new DataRetrieverJobResponseDto("001");
+        return new DataRetrievalJobResponseDto("001");
     }
 
     async saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void> {

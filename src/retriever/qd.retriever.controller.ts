@@ -79,10 +79,10 @@ export class QuantamDataRetrieverController {
         Logger.log(`QuantamDataRetrieverController : stockDataRequestDto=${JSON.stringify(stockDataRequestDto)}`);
         let stockData: StockData[] = await this.dataRetrieverService.fetchStockData(stockDataRequestDto);
         if (stockData.length > 0) {
-            Logger.log(`QuantamDataRetrieverController : stockDataLength = ${stockData.length}`);
+            Logger.log(`QuantamDataRetrieverController : stockData found with length = ${stockData.length}`);
         } else {
             Logger.log(
-                `QuantamDataRetrieverController : stockDataLength = ${stockData.length}; sending DataRetrieval request to ProxyManager`
+                `QuantamDataRetrieverController : stockData found with length = ${stockData.length}; sending DataRetrieval request to ProxyManager`
             );
             stockData = await this.dataRetrieverService.retrieveStockDataFromProxyManager(stockDataRequestDto, sync);
         }
