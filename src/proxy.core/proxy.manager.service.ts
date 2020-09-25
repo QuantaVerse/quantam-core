@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 
 import { IntervalEnum } from "../common/interfaces/data.interface";
+import { ProxyJobLog } from "../db/entity/proxy.job.log.entity";
 import { ProxyJobLogService } from "../db/service/proxy.job.log.service";
 import { StockDataRetrievalJobDto } from "./dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "./dto/response/stock-data-retrieval-job-response.dto";
@@ -110,5 +111,39 @@ export class ProxyManagerService implements ProxyManagerInterface {
             Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    /**
+     * @method getJobDataById
+     *
+     * @param {string} jobId
+     *
+     * @returns Promise<ProxyJobLog>
+     */
+    async getJobDataById(jobId: string): Promise<ProxyJobLog> {
+        Logger.log(`ProxyManagerService : getJobDataById : jobId = ${jobId}`);
+        return await this.proxyJobLogService.findProxyJobLogById(jobId);
+    }
+
+    /**
+     * @method searchProxyJobLogs
+     *
+     * @param {string | null} proxyName
+     * @param {string | null} jobType
+     * @param {number | null} responseStatusCode
+     * @param {number} limit
+     *
+     * @returns Promise<ProxyJobLog[]>
+     */
+    async searchProxyJobLogs(
+        proxyName: string | null,
+        jobType: string | null,
+        responseStatusCode: number | null,
+        limit: number
+    ): Promise<ProxyJobLog[]> {
+        Logger.log(
+            `ProxyManagerService : searchProxyJobLogs : proxy = ${proxyName} jobType = ${jobType} responseStatusCode = ${responseStatusCode} limit=${limit}`
+        );
+        return await this.proxyJobLogService.findProxyJobLogsByParams(proxyName, jobType, responseStatusCode, limit);
     }
 }

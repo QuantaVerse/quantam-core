@@ -17,7 +17,12 @@ export class KiteAPI implements IKiteAPI {
         this.proxyJobLogService = proxyJobLogService;
         this.apiKey = apiKey;
         this.verbose = verbose !== undefined ? verbose : false;
-        this.kiteConnect = new KiteConnect({ api_key: "your_api_key" });
+        this.kiteConnect = new KiteConnect({ api_key: this.apiKey, debug: this.verbose });
+
+        // TODO: Next steps
+        // 1. Get an access token from login api and save
+        // 2. Implement intra-day and daily-data fetcher
+        // 3. Delete KiteConnectJs dependency
     }
 
     async getHealth(): Promise<any> {
@@ -26,9 +31,6 @@ export class KiteAPI implements IKiteAPI {
         return await axios.get(url);
     }
 
-    // kc = new KiteConnect({
-    //     api_key: "your_api_key"
-    // });
     //
     // kc.generateSession("request_token", "api_secret").then(function(response) {
     //     init();
@@ -43,7 +45,7 @@ export class KiteAPI implements IKiteAPI {
     //         .then(function(response) {
     //             // You got user's margin details.
     //         }).catch(function(err) {
-    //         // Something went wrong.
-    //     });
+    //             // Something went wrong.
+    //         });
     // }
 }

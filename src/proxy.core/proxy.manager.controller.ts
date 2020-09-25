@@ -1,5 +1,6 @@
-import { Body, Controller, Get, HttpException, Logger, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, Logger, Param, Post, Query } from "@nestjs/common";
 
+import { ProxyJobLog } from "../db/entity/proxy.job.log.entity";
 import { StockDataRetrievalJobDto } from "./dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "./dto/response/stock-data-retrieval-job-response.dto";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
@@ -14,6 +15,8 @@ import { ProxyManagerService } from "./proxy.manager.service";
  * 1. /GET stats
  * 2. /GET stats/:name
  * 3. /POST createJob : @body StockDataRetrievalJobDto
+ * 4. /GET job/:jobId
+ * 5. /GET job/search
  *
  */
 @Controller("proxy_manager")
@@ -59,9 +62,39 @@ export class ProxyManagerController {
         return await this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto);
     }
 
-    // TODO: jobs apis
-    // @Get("job/:jobId")
-    // getJobStats(@Param("jobId") jobId: string): Promise<ProxyJobLog> {
-    //
-    // }
+    /**
+     * API Endpoint for getting details of one ProxyJobLog
+     *
+     * @param jobId - Id of the ProxyJobLog
+     *
+     * @returns Promise<ProxyJobLog>
+     */
+    @Get("job/:jobId")
+    async getJobData(@Param("jobId") jobId: string): Promise<ProxyJobLog> {
+        Logger.log(`ProxyManagerController : getJobData : jobId = ${jobId}`);
+        return await this.proxyManagerService.getJobDataById(jobId);
+    }
+
+    /**
+     * API Endpoint for searching ProxyJobLogs
+     *
+     * @param {string | null} [proxyName=null]
+     * @param {string | null} [jobType=null]
+     * @param {number | null} [responseStatusCode=null]
+     * @param {number} [limit=10]
+     *
+     * @returns Promise<ProxyJobLog[]>
+     */
+    @Get("job_search")
+    async searchProxyJobLogs(
+        @Query("proxy") proxyName: string | null = null,
+        @Query("jobType") jobType: string | null = null,
+        @Query("responseStatusCode") responseStatusCode: number | null = null,
+        @Query("limit") limit = 10
+    ): Promise<ProxyJobLog[]> {
+        Logger.log(
+            `ProxyManagerController : searchProxyJobLogs : proxy = ${proxyName} jobType = ${jobType} responseStatusCode = ${responseStatusCode} limit=${limit}`
+        );
+        return await this.proxyManagerService.searchProxyJobLogs(proxyName, jobType, responseStatusCode, limit);
+    }
 }

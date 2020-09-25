@@ -64,7 +64,7 @@ export class DataProxyService implements DataProxyInterface {
         };
     }
 
-    @Cron(CronExpression.EVERY_30_SECONDS)
+    @Cron(CronExpression.EVERY_HOUR)
     async proxyHealthCheckScheduler(): Promise<any> {
         return await this.pingProxyHealth()
             .then((response) => {

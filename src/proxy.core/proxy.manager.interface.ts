@@ -1,5 +1,6 @@
 import { HttpException } from "@nestjs/common";
 
+import { ProxyJobLog } from "../db/entity/proxy.job.log.entity";
 import { StockDataRetrievalJobDto } from "./dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "./dto/response/stock-data-retrieval-job-response.dto";
 import { DataProxyStats } from "./proxies/proxy/data.proxy.interface";
@@ -19,4 +20,11 @@ export interface ProxyManagerInterface {
     createStockDataRetrievalJob(
         stockDataRetrievalJobDto: StockDataRetrievalJobDto
     ): Promise<StockDataRetrievalJobResponseDto | HttpException>;
+    getJobDataById(jobId: string): Promise<ProxyJobLog>;
+    searchProxyJobLogs(
+        proxyName: string | null,
+        jobType: string | null,
+        responseStatusCode: number | null,
+        limit: number
+    ): Promise<ProxyJobLog[]>;
 }

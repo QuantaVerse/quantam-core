@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { FindConditions, Repository } from "typeorm";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
 import { StockDataRetrievalJobDto } from "../../proxy.core/dto/request/stock-data-retrieval-job.dto";
@@ -27,6 +27,35 @@ export class ProxyJobLogService {
                 updatedAt: -1
             },
             take: 20
+        });
+    }
+
+    async findProxyJobLogById(jobId: string): Promise<ProxyJobLog> {
+        return await this.proxyJobLogRepository.findOne(jobId);
+    }
+
+    async findProxyJobLogsByParams(
+        proxyName: string | null,
+        jobType: string | null,
+        responseStatusCode: number | null,
+        limit: number
+    ): Promise<ProxyJobLog[]> {
+        const searchParams: FindConditions<ProxyJobLog> = {};
+        if (proxyName != null) {
+            searchParams.proxy = proxyName;
+        }
+        if (jobType != null) {
+            searchParams.jobType = jobType;
+        }
+        if (responseStatusCode != null) {
+            searchParams.responseStatusCode = responseStatusCode;
+        }
+        return await this.proxyJobLogRepository.find({
+            where: searchParams,
+            order: {
+                updatedAt: -1
+            },
+            take: limit
         });
     }
 
