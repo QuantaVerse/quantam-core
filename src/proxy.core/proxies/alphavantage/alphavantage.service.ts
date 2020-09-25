@@ -35,8 +35,8 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         );
     }
 
-    pingProxyHealth(): Promise<any> {
-        return this._alphaVantageAPI.getHealth();
+    async pingProxyHealth(): Promise<any> {
+        return await this._alphaVantageAPI.getHealth();
     }
 
     async retrieveStockData(

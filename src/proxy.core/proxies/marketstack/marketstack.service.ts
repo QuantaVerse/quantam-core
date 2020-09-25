@@ -20,7 +20,7 @@ export class MarketStackService extends DataProxyService implements DataProxyInt
         this._marketStackAPI = new MarketStackAPI(proxyJobLogService, this.API_KEY, true);
     }
 
-    pingProxyHealth(): Promise<any> {
-        return this._marketStackAPI.getHealth();
+    async pingProxyHealth(): Promise<any> {
+        return await this._marketStackAPI.getHealth();
     }
 }

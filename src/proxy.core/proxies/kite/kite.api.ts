@@ -1,11 +1,31 @@
+import { Logger } from "@nestjs/common";
+import axios from "axios";
 import { KiteConnect } from "kiteconnect";
 
-export class KiteApi {
-    private readonly kc;
+import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
+import { buildUrl } from "../../../util/build.url";
+import { IKiteAPI } from "./kite.interface";
 
-    constructor(kc: KiteConnect) {
-        this.kc = new KiteConnect({ api_key: "your_api_key" });
+export class KiteAPI implements IKiteAPI {
+    private readonly proxyJobLogService: ProxyJobLogService;
+    private readonly baseUrl: string = "https://api.kite.trade";
+    private readonly apiKey: string;
+    private readonly verbose: boolean;
+    private readonly kiteConnect: KiteConnect;
+
+    constructor(proxyJobLogService: ProxyJobLogService, apiKey: string, verbose: boolean | undefined) {
+        this.proxyJobLogService = proxyJobLogService;
+        this.apiKey = apiKey;
+        this.verbose = verbose !== undefined ? verbose : false;
+        this.kiteConnect = new KiteConnect({ api_key: "your_api_key" });
     }
+
+    async getHealth(): Promise<any> {
+        const url: string = buildUrl(this.baseUrl);
+        this.verbose && Logger.log("KiteAPI : getHealth url >> " + url);
+        return await axios.get(url);
+    }
+
     // kc = new KiteConnect({
     //     api_key: "your_api_key"
     // });
