@@ -64,7 +64,7 @@ export class DataProxyService implements DataProxyInterface {
         };
     }
 
-    @Cron(CronExpression.EVERY_5_MINUTES)
+    @Cron(CronExpression.EVERY_30_SECONDS)
     async proxyHealthCheckScheduler(): Promise<any> {
         return await this.pingProxyHealth()
             .then((response) => {
@@ -83,12 +83,11 @@ export class DataProxyService implements DataProxyInterface {
             })
             .catch((error) => {
                 Logger.error(`DataProxyService : pingProxyHealth for '${this.PROXY_NAME}': error`, error);
-                // TODO: test this flow
                 this.proxyJobLogService.createJobLogFromProxyAndJobType(
                     this.PROXY_NAME,
                     JobTypeEnum.HEALTH_CHECK_JOB,
                     error?.config?.url,
-                    error?.status,
+                    error?.response?.status,
                     error?.message?.toString()
                 );
             });

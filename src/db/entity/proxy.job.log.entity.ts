@@ -2,7 +2,7 @@ import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateCol
 
 import { censorAPI } from "../../util/censor.url";
 
-const API_KEY_FIELDS: string[] = ["apikey"];
+const API_KEY_FIELDS: string[] = ["apikey", "access_key"];
 
 @Entity("proxy_job_log")
 export class ProxyJobLog {
