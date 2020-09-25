@@ -3,9 +3,10 @@ import { ConfigService } from "@nestjs/config";
 
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { StockData } from "../../../db/entity/stock.data.entity";
+import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { StockDataService } from "../../../db/service/stock.data.service";
-import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
+import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
@@ -16,8 +17,8 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
     private readonly _alphaVantageAPI: IAlphavantageAPI;
     private readonly ALPHA_PROXY_CONFIG;
 
-    constructor(private configService: ConfigService, private stockDataService: StockDataService) {
-        super();
+    constructor(private configService: ConfigService, private stockDataService: StockDataService, proxyJobLogService: ProxyJobLogService) {
+        super(proxyJobLogService);
         this.PROXY_NAME = "AlphaVantage";
         this.API_KEY_NAME = "PROXY_APIKEY_ALPHA_VANTAGE";
         this.API_KEY = this.configService.get<string>(this.API_KEY_NAME);
@@ -26,6 +27,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         this.PROXY_CONFIG = this.ALPHA_PROXY_CONFIG;
 
         this._alphaVantageAPI = new AlphaVantageAPI(
+            proxyJobLogService,
             this.API_KEY,
             this.ALPHA_PROXY_CONFIG.preferredDataType,
             this.ALPHA_PROXY_CONFIG.preferredOutputSize,
@@ -33,24 +35,33 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         );
     }
 
-    pingProxyHealth(): void {
-        this._alphaVantageAPI
-            .getHealth()
-            .then(() => {
-                Logger.log("AlphaVantageService : pingProxyHealth: pinged");
-            })
-            .catch((error) => {
-                Logger.error("AlphaVantageService : pingProxyHealth: error", error);
-            });
+    pingProxyHealth(): Promise<any> {
+        return this._alphaVantageAPI.getHealth();
     }
 
-    async retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
-        const interval: number = dataRetrieverJobDto.interval;
+    async retrieveStockData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
+        if (stockDataRetrievalJobDto.interval >= 1440) {
+            return await this.retrieveDailyData(stockDataRetrievalJobDto, jobId);
+        } else {
+            return await this.retrieveIntraDayData(stockDataRetrievalJobDto, jobId);
+        }
+    }
+
+    async retrieveIntraDayData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
+        // TODO: Use jobId to update the job status
+        Logger.log(`AlphaVantageService : retrieveIntraDayData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto} jobId=${jobId}`);
+        const interval: number = stockDataRetrievalJobDto.interval;
         await this._alphaVantageAPI
-            .getIntraDayData(dataRetrieverJobDto.symbol, `${interval}min`)
+            .getIntraDayData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, `${interval}min`)
             .then((data: IntraDayBar[]) => {
                 Logger.log("AlphaVantageService : retrieveIntraDayData: success");
-                this.saveIntraDayDataToDb(dataRetrieverJobDto.symbol, interval, data)
+                this.saveIntraDayDataToDb(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, interval, data)
                     .then(() => {
                         Logger.log("AlphaVantageService : saveIntraDayDataToDb: success");
                     })
@@ -67,16 +78,17 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
                     throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             });
-        return new DataRetrieverJobResponseDto("001");
+        return new StockDataRetrievalJobResponseDto("001");
     }
 
-    async saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void> {
+    async saveIntraDayDataToDb(symbol: string, exchange: string, interval: number, data: IntraDayBar[]): Promise<void> {
         Logger.log(
             `AlphaVantageService : saveIntraDayDataToDb: symbol=${symbol} interval=${interval} IntraDayBarArrayLength=${data.length}`
         );
         data.forEach((d) => {
             const stockData: StockData = new StockData(
                 symbol,
+                exchange,
                 interval,
                 d.Timestamp,
                 d.Open,
@@ -90,13 +102,18 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         });
     }
 
-    async retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto> {
-        const interval: number = dataRetrieverJobDto.interval;
+    async retrieveDailyData(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto> {
+        // TODO: Use jobId to update the job status
+        Logger.log(`AlphaVantageService : retrieveDailyData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto} jobId=${jobId}`);
+        const interval: number = stockDataRetrievalJobDto.interval;
         await this._alphaVantageAPI
-            .getDailyData(dataRetrieverJobDto.symbol, `${interval}min`)
+            .getDailyData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, `${interval}min`)
             .then((data: DailyBar[]) => {
                 Logger.log("AlphaVantageService : retrieveDailyData: success");
-                this.saveDailyDataToDb(dataRetrieverJobDto.symbol, interval, data)
+                this.saveDailyDataToDb(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, interval, data)
                     .then(() => {
                         Logger.log("AlphaVantageService : saveDailyDataToDb: success");
                     })
@@ -113,16 +130,15 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
                     throw new HttpException(error.toString(), HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             });
-        return new DataRetrieverJobResponseDto("001");
+        return new StockDataRetrievalJobResponseDto("001");
     }
 
-    async saveDailyDataToDb(symbol: string, interval: number, data: DailyBar[]): Promise<void> {
-        Logger.log(
-            `AlphaVantageService : saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`
-        );
+    async saveDailyDataToDb(symbol: string, exchange: string, interval: number, data: DailyBar[]): Promise<void> {
+        Logger.log(`AlphaVantageService : saveDailyDataToDb: symbol=${symbol} interval=${interval} DailyBarArrayLength=${data.length}`);
         data.forEach((d) => {
             const stockData: StockData = new StockData(
                 symbol,
+                exchange,
                 interval,
                 d.Timestamp,
                 d.Open,

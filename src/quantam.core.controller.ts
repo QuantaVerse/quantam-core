@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Logger } from "@nestjs/common";
 
 import { QuantamCoreService } from "./quantam.core.service";
 
@@ -6,8 +6,7 @@ import { QuantamCoreService } from "./quantam.core.service";
  * QuantamCoreController is an injectable instance made for QuantamCoreModule
  *
  * APIs available:
- *
- *      /GET health
+ * 1. /GET health
  *
  */
 @Controller("")
@@ -15,13 +14,14 @@ export class QuantamCoreController {
     constructor(private readonly coreService: QuantamCoreService) {}
 
     /**
-     * Health api for Quantam Core module
+     * API Endpoint for checking health of Quantam Core module
      * Used for fetching current status of the module
      *
      * @return {Record<string, string>}
      */
     @Get("health")
     getHealth(): Record<string, string> {
+        Logger.log(`QuantamCoreController : getHealth`);
         return this.coreService.getQuantamCoreStatus();
     }
 }

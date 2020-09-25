@@ -8,4 +8,5 @@ import { StockDataRequestDto } from "./dto/request/stock-data.request.dto";
 export interface QuantamDataRetrieverServiceInterface {
     getHealth(): Record<string, string>;
     fetchStockData(stockDataRequestDto: StockDataRequestDto): Promise<StockData[]>;
+    retrieveStockDataFromProxyManager(stockDataRequestDto: StockDataRequestDto, sync: boolean): Promise<StockData[]>;
 }

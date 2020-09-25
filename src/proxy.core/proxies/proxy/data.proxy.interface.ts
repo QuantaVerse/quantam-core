@@ -1,6 +1,5 @@
-import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
-import { DataRetrieverJobDto } from "../../../retriever/dto/request/data-retriever-job.dto";
-import { DataRetrieverJobResponseDto } from "../dto/response/data-retriever-job-response.dto";
+import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
+import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 
 /***
  * Defining the status of proxy based on previous API calls
@@ -21,7 +20,7 @@ export enum ProxyStatus {
 
 export interface ProxyAPIStats {
     status: ProxyStatus;
-    api_hit_rate: number | undefined;
+    api_hit_rate: number | null;
 }
 
 export interface DataProxyStats {
@@ -31,13 +30,14 @@ export interface DataProxyStats {
     readonly api_stats: ProxyAPIStats;
 }
 
+/**
+ * @interface DataProxyInterface
+ * Used as the service interface for DataProxyService
+ */
 export interface DataProxyInterface {
-    getProxyStats(): DataProxyStats;
+    getProxyStats(): Promise<DataProxyStats>;
     fetchAPIStats(): void;
-    proxyHealthCheckScheduler(): void;
-    pingProxyHealth(): void;
-    retrieveIntraDayData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto>;
-    saveIntraDayDataToDb(symbol: string, interval: number, data: IntraDayBar[]): Promise<void>;
-    retrieveDailyData(dataRetrieverJobDto: DataRetrieverJobDto): Promise<DataRetrieverJobResponseDto>;
-    saveDailyDataToDb(symbol: string, interval: number, data: DailyBar[]): Promise<void>;
+    proxyHealthCheckScheduler(): Promise<any>;
+    pingProxyHealth(): Promise<any>;
+    retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto>;
 }

@@ -1,7 +1,6 @@
 import { Controller, Get, HttpException, HttpStatus, Logger, Query } from "@nestjs/common";
 
 import { StockData } from "../db/entity/stock.data.entity";
-import { ProxyManagerService } from "../proxy.core/proxy.manager.service";
 import { StockDataRequestDto } from "./dto/request/stock-data.request.dto";
 import { StockDataResponseDto } from "./dto/response/stock-data.response.dto";
 import { QuantamDataRetrieverService } from "./qd.retriever.service";
@@ -9,19 +8,18 @@ import { QuantamDataRetrieverService } from "./qd.retriever.service";
 /**
  * QuantamDataRetrieverController is an injectable instance made for QuantamDataRetrieverModule.
  *
+ * API path prefix: retriever
+ *
  * APIs available:
  * 1. /GET health
  * 2. /GET fetchStockData
  */
 @Controller("retriever")
 export class QuantamDataRetrieverController {
-    constructor(
-        private readonly dataRetrieverService: QuantamDataRetrieverService,
-        private readonly proxyManagerService: ProxyManagerService
-    ) {}
+    constructor(private readonly dataRetrieverService: QuantamDataRetrieverService) {}
 
     /**
-     * Health api for Quantam Data Retriever module.
+     * API Endpoint for checking health of Quantam Data Retriever module.
      * Used for fetching current status of the module.
      *
      * @return {Record<string, string>}
@@ -39,6 +37,7 @@ export class QuantamDataRetrieverController {
      * 1. Check stockData collection for required stock data.
      * 2. Validate the output from StockDataService and cache the validation.
      * 3. If validation failed or data not found, create a dataRetrievalJob in ProxyManagerService.
+     * 4. If sync is true, try to fetch the data again post dataRetrievalJob completion.
      *
      * Valid URL params: "symbol", "exchange", "interval", "startDate", "endDate"
      *
@@ -55,9 +54,11 @@ export class QuantamDataRetrieverController {
      * common valid intervals = ["1m", "1min", "5m", "60m", "1h", "1hour", "1d", "1day", "1w", "1week", "1month"]
      * @param {string} [startDate=currentTime-interval] - data gets fetched from startDate to endDate
      * @param {string} [endDate=currentTime] - data gets fetched from startDate to endDate
-     * startDate and endDate should have one of the following format: "yyyy-mm-dd:hh-mm-ss" OR "yyyy-mm-dd" OR "yy-mm-dd"
+     * startDate and endDate should have any format accepted by JavaScript Date.parse()
+     * Following formats are recommended: "yyyy-mm-dd:hh:mm:ss" OR "yyyy-mm-dd" OR ISOString()
+     * @param {boolean} [sync=false] - if sync is true, data will be fetched synchronously in case data is not found
      *
-     * @return {StockDataResponseDto | HttpException}
+     * @returns {Promise<StockDataResponseDto | HttpException>}
      */
     @Get("fetchStockData")
     async fetchStockData(
@@ -65,10 +66,11 @@ export class QuantamDataRetrieverController {
         @Query("exchange") exchange = "NSE",
         @Query("interval") interval = "1d",
         @Query("startDate") startDate?: string,
-        @Query("endDate") endDate?: string
+        @Query("endDate") endDate?: string,
+        @Query("sync") sync = false
     ): Promise<StockDataResponseDto | HttpException> {
         Logger.log(
-            `QuantamDataRetrieverController : fetchStockData symbol=${symbol} exchange=${exchange} interval=${interval} startDate=${startDate} endDate=${endDate}`
+            `QuantamDataRetrieverController : fetchStockData symbol=${symbol} exchange=${exchange} interval=${interval} startDate=${startDate} endDate=${endDate} sync=${sync}`
         );
         let stockDataRequestDto: StockDataRequestDto;
         try {
@@ -76,12 +78,15 @@ export class QuantamDataRetrieverController {
         } catch (error) {
             return new HttpException(`ValidationError : ${error}`, HttpStatus.BAD_REQUEST);
         }
-        Logger.log("QuantamDataRetrieverController : stockDataRequestDto=" + JSON.stringify(stockDataRequestDto));
-        const stockData: StockData[] = await this.dataRetrieverService.fetchStockData(stockDataRequestDto);
+        Logger.log(`QuantamDataRetrieverController : stockDataRequestDto=${JSON.stringify(stockDataRequestDto)}`);
+        let stockData: StockData[] = await this.dataRetrieverService.fetchStockData(stockDataRequestDto);
         if (stockData.length > 0) {
-            Logger.log(`QuantamDataRetrieverController : stockDataLength = ${stockData.length} `);
+            Logger.log(`QuantamDataRetrieverController : stockData found with length = ${stockData.length}`);
         } else {
-            Logger.log(`QuantamDataRetrieverController : stockDataLength = ${stockData.length}`);
+            Logger.log(
+                `QuantamDataRetrieverController : stockData found with length = ${stockData.length}; sending DataRetrieval request to ProxyManager`
+            );
+            stockData = await this.dataRetrieverService.retrieveStockDataFromProxyManager(stockDataRequestDto, sync);
         }
         return new StockDataResponseDto(stockDataRequestDto, stockData);
     }

@@ -9,6 +9,9 @@ export class StockData {
     symbol: string;
 
     @PrimaryColumn()
+    exchange: string;
+
+    @PrimaryColumn()
     interval: number;
 
     @PrimaryColumn()
@@ -43,6 +46,7 @@ export class StockData {
 
     constructor(
         symbol: string,
+        exchange: string,
         interval: number,
         timestamp: Date,
         open: number,
@@ -55,6 +59,7 @@ export class StockData {
     ) {
         this.uid = symbol + "_" + interval + "min_" + timestamp;
         this.symbol = symbol;
+        this.exchange = exchange;
         this.interval = interval;
         this.timestamp = timestamp;
         this.open = open;

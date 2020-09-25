@@ -22,6 +22,6 @@ export class AlphavantageProxyConfig {
 
 export interface IAlphavantageAPI {
     getHealth(): Promise<any>;
-    getIntraDayData(symbol: string, interval: string): Promise<IntraDayBar[]>;
-    getDailyData(symbol: string, interval: string): Promise<DailyBar[]>;
+    getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]>;
+    getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]>;
 }

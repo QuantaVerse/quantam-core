@@ -3,24 +3,32 @@ import axios from "axios";
 import { fromCSV, IDataFrame } from "data-forge";
 
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
+import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { buildUrl } from "../../../util/build.url";
 import { DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";
 
 export class AlphaVantageAPI implements IAlphavantageAPI {
+    private readonly proxyJobLogService: ProxyJobLogService;
     private readonly baseUrl: string = "https://www.alphavantage.co";
     private readonly apiKey: string;
     private readonly dataType: DataType;
     private readonly outputSize: OutputSize;
     private readonly verbose: boolean;
 
-    constructor(apiKey: string, dataType: DataType, outputSize: OutputSize, verbose: boolean | undefined) {
+    constructor(
+        proxyJobLogService: ProxyJobLogService,
+        apiKey: string,
+        dataType: DataType,
+        outputSize: OutputSize,
+        verbose: boolean | undefined
+    ) {
+        this.proxyJobLogService = proxyJobLogService;
         this.apiKey = apiKey;
         this.dataType = dataType;
         this.outputSize = outputSize;
         this.verbose = verbose !== undefined ? verbose : false;
     }
 
-    // TODO: save all API call logs
     async getHealth(): Promise<any> {
         const symbolSearchFunction = "SYMBOL_SEARCH";
         const demoAPIKey = "demo";
@@ -36,7 +44,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
         return await axios.get(url);
     }
 
-    async getIntraDayData(symbol: string, interval: string): Promise<IntraDayBar[]> {
+    async getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]> {
         const intraDayFunction = "TIME_SERIES_INTRADAY";
         const url: string = buildUrl(this.baseUrl, {
             path: "query",
@@ -77,7 +85,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
         return dataFrame.toArray();
     }
 
-    async getDailyData(symbol: string, interval: string): Promise<DailyBar[]> {
+    async getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]> {
         const timeSeriesDailyFunction = "TIME_SERIES_DAILY";
         const url: string = buildUrl(this.baseUrl, {
             path: "query",
