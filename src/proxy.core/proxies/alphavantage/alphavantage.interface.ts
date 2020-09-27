@@ -1,4 +1,4 @@
-import { DailyBar, IntervalEnum, IntraDayBar } from "../../../common/interfaces/data.interface";
+import { DailyBar, ExchangeEnum, IntervalEnum, IntraDayBar } from "../../../common/interfaces/data.interface";
 
 export enum OutputSize {
     Full = "full",
@@ -33,17 +33,40 @@ export function alphaVantageInterval(interval: IntervalEnum): string {
         case IntervalEnum.ONE_MONTH:
             return "monthly";
         default:
+            throw Error(`Interval='${interval}' is unknown to AlphaVantage`);
+    }
+}
+
+export function alphaVantageExchange(exchange: ExchangeEnum): string {
+    switch (exchange) {
+        case ExchangeEnum.BSE:
+            return "BSE";
+        case ExchangeEnum.NSE:
+            return "NSE";
+        case ExchangeEnum.NYSE:
             return "";
+        case ExchangeEnum.NASDAQ:
+            return "";
+        default:
+            throw Error(`Exchange='${exchange}' is unknown to AlphaVantage`);
     }
 }
 
 export class AlphavantageProxyConfig {
     preferredDataType: string;
     preferredOutputSize: string;
+    intraDayIntervals: IntervalEnum[];
 
     constructor(preferredDataType: DataType | undefined, preferredOutputSize: OutputSize | undefined) {
         this.preferredDataType = preferredDataType !== undefined ? preferredDataType : DataType.JSON;
         this.preferredOutputSize = preferredOutputSize !== undefined ? preferredOutputSize : OutputSize.Compact;
+        this.intraDayIntervals = [
+            IntervalEnum.ONE_MIN,
+            IntervalEnum.FIVE_MIN,
+            IntervalEnum.FIFTEEN_MIN,
+            IntervalEnum.THIRTY_MIN,
+            IntervalEnum.ONE_HOUR
+        ];
     }
 }
 

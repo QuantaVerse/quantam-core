@@ -1,13 +1,13 @@
 import { IsNotEmpty } from "class-validator";
 
-import { getIntervalEnum, IntervalEnum } from "../../../common/interfaces/data.interface";
+import { ExchangeEnum, getExchangeEnum, getIntervalEnum, IntervalEnum } from "../../../common/interfaces/data.interface";
 
 export class StockDataRequestDto {
     @IsNotEmpty()
     symbol: string;
 
     @IsNotEmpty()
-    exchange: string;
+    exchange: ExchangeEnum;
 
     @IsNotEmpty()
     interval: IntervalEnum;
@@ -18,7 +18,7 @@ export class StockDataRequestDto {
 
     constructor(symbol: string, exchange: string, interval?: string, startDate?: string, endDate?: string, limit = 1) {
         this.symbol = symbol;
-        this.exchange = exchange;
+        this.exchange = getExchangeEnum(exchange);
         if (interval === undefined) {
             this.interval = getIntervalEnum("1d");
         } else if (new RegExp(/\d{1,5}\w{1,5}/i).test(interval)) {

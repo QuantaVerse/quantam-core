@@ -16,12 +16,31 @@ export class IntraDayBar {
     Volume: number;
 }
 
-export enum Exchange {
+export enum ExchangeEnum {
     NSE = "NSE",
     BSE = "BSE",
     NASDAQ = "NASDAQ",
-    NYSE = "NYSE",
-    CRYPTO = "Crypto"
+    NYSE = "NYSE"
+}
+
+export function getExchangeEnum(exchange: string): ExchangeEnum {
+    const exchangeMap = new Map<ExchangeEnum, string[]>();
+    exchangeMap.set(ExchangeEnum.NYSE, ["NYSE", "nyse"]);
+    exchangeMap.set(ExchangeEnum.NASDAQ, ["NASDAQ", "nasdaq"]);
+    exchangeMap.set(ExchangeEnum.NSE, ["NSE", "nse"]);
+    exchangeMap.set(ExchangeEnum.BSE, ["BSE", "bse"]);
+
+    const reverseMap = new Map<string, ExchangeEnum>();
+    exchangeMap.forEach((intervalStrings, exchangeEnum) => {
+        intervalStrings.forEach((str) => {
+            reverseMap.set(str, exchangeEnum);
+        });
+    });
+    if (reverseMap.has(exchange.toString())) {
+        return reverseMap.get(exchange.toString());
+    } else {
+        throw new Error(`Exchange '${exchange}' is not a valid exchange`);
+    }
 }
 
 export enum IntervalEnum {

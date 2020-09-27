@@ -61,7 +61,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
             path: "query",
             queryParams: {
                 function: intraDayFunction,
-                symbol: symbol,
+                symbol: symbol + (exchange !== "" ? `.${exchange}` : ``),
                 apikey: this.apiKey,
                 datatype: this.dataType,
                 outputsize: this.outputSize,
@@ -153,7 +153,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
             path: "query",
             queryParams: {
                 function: timeSeriesDailyFunction,
-                symbol: symbol,
+                symbol: symbol + (exchange !== "" ? `.${exchange}` : ``),
                 apikey: this.apiKey,
                 datatype: this.dataType,
                 outputsize: this.outputSize

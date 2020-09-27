@@ -11,7 +11,14 @@ import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-
 import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
-import { alphaVantageInterval, AlphavantageProxyConfig, DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";
+import {
+    alphaVantageExchange,
+    alphaVantageInterval,
+    AlphavantageProxyConfig,
+    DataType,
+    IAlphavantageAPI,
+    OutputSize
+} from "./alphavantage.interface";
 
 @Injectable()
 export class AlphaVantageService extends DataProxyService implements DataProxyInterface {
@@ -42,16 +49,16 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
 
     async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto> {
         Logger.log(`AlphaVantageService : retrieveStockData: stockDataRetrievalJobDto=${JSON.stringify(stockDataRetrievalJobDto)} jobId=${jobId}`);
-        if (stockDataRetrievalJobDto.interval === IntervalEnum.ONE_DAY) {
-            return await this.retrieveDailyData(stockDataRetrievalJobDto, jobId);
-        } else if (
-            [IntervalEnum.ONE_MIN, IntervalEnum.FIVE_MIN, IntervalEnum.FIFTEEN_MIN, IntervalEnum.THIRTY_MIN, IntervalEnum.ONE_HOUR].includes(
-                stockDataRetrievalJobDto.interval
-            )
-        ) {
-            return await this.retrieveIntraDayData(stockDataRetrievalJobDto, jobId);
+        if (alphaVantageExchange(stockDataRetrievalJobDto.exchange) != null) {
+            if (stockDataRetrievalJobDto.interval === IntervalEnum.ONE_DAY) {
+                return await this.retrieveDailyData(stockDataRetrievalJobDto, jobId);
+            } else if (this.ALPHA_PROXY_CONFIG?.intraDayIntervals?.includes(stockDataRetrievalJobDto.interval)) {
+                return await this.retrieveIntraDayData(stockDataRetrievalJobDto, jobId);
+            } else {
+                throw new Error(`AlphaVantageService : retrieveStockData : Invalid interval='${stockDataRetrievalJobDto.interval}'`);
+            }
         } else {
-            throw new Error(`AlphaVantageService : retrieveStockData : Invalid interval='${stockDataRetrievalJobDto.interval}'`);
+            throw new Error(`AlphaVantageService : retrieveStockData : Invalid exchange='${stockDataRetrievalJobDto.exchange}'`);
         }
     }
 
@@ -60,11 +67,11 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         const interval: number = stockDataRetrievalJobDto.interval;
         const url: string = this._alphaVantageAPI.getIntraDayDataUrl(
             stockDataRetrievalJobDto.symbol,
-            stockDataRetrievalJobDto.exchange,
+            alphaVantageExchange(stockDataRetrievalJobDto.exchange),
             alphaVantageInterval(interval)
         );
         await this._alphaVantageAPI
-            .getIntraDayData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, alphaVantageInterval(interval))
+            .getIntraDayData(stockDataRetrievalJobDto.symbol, alphaVantageExchange(stockDataRetrievalJobDto.exchange), alphaVantageInterval(interval))
             .then((data: IntraDayBar[]) => {
                 Logger.log("AlphaVantageService : retrieveIntraDayData: success");
                 this.saveIntraDayDataToDb(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, interval, data)
@@ -115,11 +122,11 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         const interval: number = stockDataRetrievalJobDto.interval;
         const url: string = this._alphaVantageAPI.getDailyDataUrl(
             stockDataRetrievalJobDto.symbol,
-            stockDataRetrievalJobDto.exchange,
+            alphaVantageExchange(stockDataRetrievalJobDto.exchange),
             alphaVantageInterval(interval)
         );
         await this._alphaVantageAPI
-            .getDailyData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, alphaVantageInterval(interval))
+            .getDailyData(stockDataRetrievalJobDto.symbol, alphaVantageExchange(stockDataRetrievalJobDto.exchange), alphaVantageInterval(interval))
             .then((data: DailyBar[]) => {
                 Logger.log("AlphaVantageService : retrieveDailyData: success");
                 this.saveDailyDataToDb(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, interval, data)
