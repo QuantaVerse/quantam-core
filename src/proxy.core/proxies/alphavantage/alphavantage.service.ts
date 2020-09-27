@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 
-import { IntervalEnum,StockDataBar } from "../../../common/interfaces/data.interface";
+import { IntervalEnum, StockDataBar } from "../../../common/interfaces/data.interface";
 import { ProxyJobLog } from "../../../db/entity/proxy.job.log.entity";
 import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { StockDataService } from "../../../db/service/stock.data.service";

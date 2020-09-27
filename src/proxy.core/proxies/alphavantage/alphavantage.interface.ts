@@ -1,4 +1,4 @@
-import { ExchangeEnum, IntervalEnum,StockDataBar } from "../../../common/interfaces/data.interface";
+import { ExchangeEnum, IntervalEnum, StockDataBar } from "../../../common/interfaces/data.interface";
 import { IDataProxyConfig } from "../proxy/data.proxy.interface";
 
 export enum OutputSize {
@@ -57,6 +57,14 @@ export class AlphavantageProxyConfig implements IDataProxyConfig {
     openExchanges: ExchangeEnum[];
     intraDayIntervals: IntervalEnum[];
     additionalConfig: Record<string, string>;
+    defaultOpenExchanges: ExchangeEnum[] = [ExchangeEnum.NASDAQ, ExchangeEnum.NYSE, ExchangeEnum.NSE, ExchangeEnum.BSE];
+    defaultIntraDayIntervals: IntervalEnum[] = [
+        IntervalEnum.ONE_MIN,
+        IntervalEnum.FIVE_MIN,
+        IntervalEnum.FIFTEEN_MIN,
+        IntervalEnum.THIRTY_MIN,
+        IntervalEnum.ONE_HOUR
+    ];
 
     constructor(
         openExchanges: ExchangeEnum[] | undefined = undefined,
@@ -64,12 +72,8 @@ export class AlphavantageProxyConfig implements IDataProxyConfig {
         preferredDataType: DataType | undefined,
         preferredOutputSize: OutputSize | undefined
     ) {
-        this.openExchanges =
-            openExchanges !== undefined ? openExchanges : [ExchangeEnum.NASDAQ, ExchangeEnum.NYSE, ExchangeEnum.NSE, ExchangeEnum.BSE];
-        this.intraDayIntervals =
-            intraDayIntervals !== undefined
-                ? intraDayIntervals
-                : [IntervalEnum.ONE_MIN, IntervalEnum.FIVE_MIN, IntervalEnum.FIFTEEN_MIN, IntervalEnum.THIRTY_MIN, IntervalEnum.ONE_HOUR];
+        this.openExchanges = openExchanges !== undefined ? openExchanges : this.defaultOpenExchanges;
+        this.intraDayIntervals = intraDayIntervals !== undefined ? intraDayIntervals : this.defaultIntraDayIntervals;
         this.additionalConfig = {
             preferredDataType: preferredDataType !== undefined ? preferredDataType.toString() : DataType.JSON.toString(),
             preferredOutputSize: preferredOutputSize !== undefined ? preferredOutputSize.toString() : OutputSize.Compact.toString()
