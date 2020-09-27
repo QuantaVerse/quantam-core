@@ -69,7 +69,7 @@ export class QuantamDataRetrieverController {
         @Query("startDate") startDate?: string,
         @Query("endDate") endDate?: string,
         @Query("limit") limit = 1,
-        @Query("sync") sync = false
+        @Query("sync") sync = true
     ): Promise<StockDataResponseDto | HttpException> {
         Logger.log(
             `QuantamDataRetrieverController : fetchStockData symbol=${symbol} exchange=${exchange} interval=${interval} startDate=${startDate} endDate=${endDate} limit=${limit} sync=${sync}`

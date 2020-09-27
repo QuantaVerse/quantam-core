@@ -1,6 +1,6 @@
 import { HttpException } from "@nestjs/common";
 
-import { ExchangeEnum, IntervalEnum } from "../../../common/interfaces/data.interface";
+import { ExchangeEnum, IntervalEnum, StockDataBar } from "../../../common/interfaces/data.interface";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 
@@ -67,4 +67,5 @@ export interface DataProxyInterface {
         jobId: number | null
     ): Promise<StockDataRetrievalJobResponseDto | HttpException>;
     retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto>;
+    saveStockDataToDb(symbol: string, exchange: string, interval: number, data: StockDataBar[]): Promise<void>;
 }

@@ -1,4 +1,4 @@
-import { DailyBar, ExchangeEnum, IntervalEnum, IntraDayBar } from "../../../common/interfaces/data.interface";
+import { ExchangeEnum, IntervalEnum,StockDataBar } from "../../../common/interfaces/data.interface";
 import { IDataProxyConfig } from "../proxy/data.proxy.interface";
 
 export enum OutputSize {
@@ -80,7 +80,7 @@ export class AlphavantageProxyConfig implements IDataProxyConfig {
 export interface IAlphavantageAPI {
     getHealth(): Promise<any>;
     getIntraDayDataUrl(symbol: string, exchange: string, interval: string): string;
-    getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]>;
+    getIntraDayData(symbol: string, exchange: string, interval: string): Promise<StockDataBar[]>;
     getDailyDataUrl(symbol: string, exchange: string, interval: string): string;
-    getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]>;
+    getDailyData(symbol: string, exchange: string, interval: string): Promise<StockDataBar[]>;
 }

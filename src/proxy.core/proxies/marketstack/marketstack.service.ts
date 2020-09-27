@@ -3,9 +3,9 @@ import { ConfigService } from "@nestjs/config";
 
 import { IntervalEnum } from "../../../common/interfaces/data.interface";
 import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
+import { StockDataService } from "../../../db/service/stock.data.service";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
-import { alphaVantageExchange } from "../alphavantage/alphavantage.interface";
 import { DataProxyInterface } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { MarketStackAPI } from "./marketstack.api";
@@ -16,8 +16,8 @@ export class MarketStackService extends DataProxyService implements DataProxyInt
     private readonly _marketStackAPI: IMarketStackAPI;
     private readonly MARKET_STACK_CONFIG;
 
-    constructor(private configService: ConfigService, proxyJobLogService: ProxyJobLogService) {
-        super(proxyJobLogService);
+    constructor(private configService: ConfigService, proxyJobLogService: ProxyJobLogService, stockDataService: StockDataService) {
+        super(proxyJobLogService, stockDataService);
         this.PROXY_NAME = "MarketStack";
         this.API_KEY_NAME = "PROXY_APIKEY_MARKET_STACK";
         this.API_KEY = this.configService.get<string>(this.API_KEY_NAME);

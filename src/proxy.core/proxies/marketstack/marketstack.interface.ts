@@ -1,5 +1,4 @@
 import { ExchangeEnum, IntervalEnum } from "../../../common/interfaces/data.interface";
-import { DataType, OutputSize } from "../alphavantage/alphavantage.interface";
 import { IDataProxyConfig } from "../proxy/data.proxy.interface";
 
 /**

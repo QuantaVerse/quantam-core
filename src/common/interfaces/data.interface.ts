@@ -1,13 +1,4 @@
-export class DailyBar {
-    Timestamp: Date;
-    Open: number;
-    High: number;
-    Low: number;
-    Close: number;
-    Volume: number;
-}
-
-export class IntraDayBar {
+export class StockDataBar {
     Timestamp: Date;
     Open: number;
     High: number;
@@ -65,7 +56,7 @@ export function getIntervalEnum(interval: string): IntervalEnum {
     intervalMap.set(IntervalEnum.TEN_MIN, ["10min", "10m", "10"]);
     intervalMap.set(IntervalEnum.FIFTEEN_MIN, ["15min", "15m", "15"]);
     intervalMap.set(IntervalEnum.THIRTY_MIN, ["30min", "30m", "30"]);
-    intervalMap.set(IntervalEnum.ONE_HOUR, ["1hour", "1h", "60min", "60"]);
+    intervalMap.set(IntervalEnum.ONE_HOUR, ["1hour", "1h", "60min", "60", "60m"]);
     intervalMap.set(IntervalEnum.THREE_HOUR, ["3hour", "3h", "180min", "180"]);
     intervalMap.set(IntervalEnum.SIX_HOUR, ["6hour", "6h", "360min", "360"]);
     intervalMap.set(IntervalEnum.TWELVE_HOUR, ["12hour", "12h", "720min", "720"]);

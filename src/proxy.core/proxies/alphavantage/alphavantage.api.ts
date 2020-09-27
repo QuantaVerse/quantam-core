@@ -2,7 +2,7 @@ import { Logger } from "@nestjs/common";
 import axios from "axios";
 import { fromCSV, IDataFrame } from "data-forge";
 
-import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
+import { StockDataBar } from "../../../common/interfaces/data.interface";
 import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { buildUrl } from "../../../util/build.url";
 import { IAlphavantageAPI } from "./alphavantage.interface";
@@ -70,7 +70,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
         });
     }
 
-    async getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]> {
+    async getIntraDayData(symbol: string, exchange: string, interval: string): Promise<StockDataBar[]> {
         const url: string = this.getIntraDayDataUrl(symbol, exchange, interval);
         this.verbose && Logger.log("AlphaVantageAPI : getIntraDayData url >> " + url);
 
@@ -161,7 +161,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
         });
     }
 
-    async getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]> {
+    async getDailyData(symbol: string, exchange: string, interval: string): Promise<StockDataBar[]> {
         const url: string = this.getDailyDataUrl(symbol, exchange, interval);
         this.verbose && Logger.log("AlphaVantageAPI : getDailyData url >> " + url);
 

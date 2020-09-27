@@ -1,12 +1,15 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
+import { StockDataBar } from "../../../common/interfaces/data.interface";
 import { ProxyJobLog } from "../../../db/entity/proxy.job.log.entity";
+import { StockData } from "../../../db/entity/stock.data.entity";
 import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
+import { StockDataService } from "../../../db/service/stock.data.service";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 import { JobTypeEnum } from "../../proxy.manager.interface";
-import { DataProxyConfig,DataProxyInterface, DataProxyStats, IDataProxyConfig, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
+import { DataProxyConfig, DataProxyInterface, DataProxyStats, IDataProxyConfig, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
 
 @Injectable()
 export class DataProxyService implements DataProxyInterface {
@@ -17,14 +20,16 @@ export class DataProxyService implements DataProxyInterface {
     protected PROXY_API_STATS: ProxyAPIStats;
     protected _nextProxy: DataProxyInterface = null;
     proxyJobLogService: ProxyJobLogService;
+    stockDataService: StockDataService;
 
-    constructor(proxyJobLogService: ProxyJobLogService) {
+    constructor(proxyJobLogService: ProxyJobLogService, stockDataService: StockDataService) {
         this.PROXY_CONFIG = new DataProxyConfig();
         this.PROXY_API_STATS = {
             status: ProxyStatus.Unknown,
             api_hit_rate: undefined
         };
         this.proxyJobLogService = proxyJobLogService;
+        this.stockDataService = stockDataService;
     }
 
     getProxyName(): string {
@@ -50,7 +55,7 @@ export class DataProxyService implements DataProxyInterface {
         const proxyJobLogs: ProxyJobLog[] = await this.proxyJobLogService.findLatestProxyLogs(this.PROXY_NAME);
         const logsCount: number = proxyJobLogs.length;
         const successfulAPICount = proxyJobLogs.reduce((acc: number, log: ProxyJobLog) => {
-            return acc + (log?.responseStatusCode >= 200 && log?.responseStatusCode < 300 ? 1 : 0);
+            return acc + (log?.responseStatusCode > 0 && log?.responseStatusCode < 300 ? 1 : 0);
         }, 0);
         let hitRate: number | null = null;
         let proxyStatus: ProxyStatus = ProxyStatus.Unknown;
@@ -153,5 +158,26 @@ export class DataProxyService implements DataProxyInterface {
             Logger.log(`DataProxyService : retrieveStockDataViaProxyChain : Data not found in proxy chain!`);
             throw new HttpException("Data not found in proxy chain!", HttpStatus.NOT_FOUND);
         }
+    }
+
+    async saveStockDataToDb(symbol: string, exchange: string, interval: number, data: StockDataBar[]): Promise<void> {
+        Logger.log(
+            `DataProxyService : saveStockDataToDb: symbol=${symbol} exchange=${exchange} interval=${interval} StockDataBarLength=${data.length}`
+        );
+        data.forEach((d) => {
+            const stockData: StockData = new StockData(
+                symbol,
+                exchange,
+                interval,
+                d.Timestamp,
+                d.Open,
+                d.Close,
+                d.High,
+                d.Low,
+                d.Volume,
+                this.PROXY_NAME
+            );
+            this.stockDataService.upsert(stockData);
+        });
     }
 }

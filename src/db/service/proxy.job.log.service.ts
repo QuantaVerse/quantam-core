@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { NotEquals } from "class-validator";
-import { FindConditions, Repository, UpdateResult } from "typeorm";
+import { Equal, FindConditions, Not, Repository, UpdateResult } from "typeorm";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
 import { StockDataRetrievalJobDto } from "../../proxy.core/dto/request/stock-data-retrieval-job.dto";
@@ -23,7 +22,7 @@ export class ProxyJobLogService {
         return await this.proxyJobLogRepository.find({
             where: {
                 proxy: proxyName,
-                responseStatusCode: NotEquals(null)
+                responseStatusCode: Not(Equal(0))
             },
             order: {
                 updatedAt: -1
