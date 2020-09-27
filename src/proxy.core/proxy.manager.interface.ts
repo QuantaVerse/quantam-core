@@ -17,14 +17,7 @@ export enum JobTypeEnum {
 export interface ProxyManagerInterface {
     getProxies(): Promise<Record<string, DataProxyStats>>;
     getProxyDetails(proxyName: string): Promise<DataProxyStats | HttpException>;
-    createStockDataRetrievalJob(
-        stockDataRetrievalJobDto: StockDataRetrievalJobDto
-    ): Promise<StockDataRetrievalJobResponseDto | HttpException>;
-    getJobDataById(jobId: string): Promise<ProxyJobLog>;
-    searchProxyJobLogs(
-        proxyName: string | null,
-        jobType: string | null,
-        responseStatusCode: number | null,
-        limit: number
-    ): Promise<ProxyJobLog[]>;
+    createStockDataRetrievalJob(stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto | HttpException>;
+    getJobDataById(jobId: number): Promise<ProxyJobLog>;
+    searchProxyJobLogs(proxyName: string | null, jobType: string | null, responseStatusCode: number | null, limit: number): Promise<ProxyJobLog[]>;
 }

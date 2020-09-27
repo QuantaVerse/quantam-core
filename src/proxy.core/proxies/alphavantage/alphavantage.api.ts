@@ -15,13 +15,7 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
     private readonly outputSize: OutputSize;
     private readonly verbose: boolean;
 
-    constructor(
-        proxyJobLogService: ProxyJobLogService,
-        apiKey: string,
-        dataType: DataType,
-        outputSize: OutputSize,
-        verbose: boolean | undefined
-    ) {
+    constructor(proxyJobLogService: ProxyJobLogService, apiKey: string, dataType: DataType, outputSize: OutputSize, verbose: boolean | undefined) {
         this.proxyJobLogService = proxyJobLogService;
         this.apiKey = apiKey;
         this.dataType = dataType;
@@ -61,9 +55,9 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
      * @param {string} exchange
      * @param {string} interval
      */
-    async getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]> {
+    getIntraDayDataUrl(symbol: string, exchange: string, interval: string): string {
         const intraDayFunction = "TIME_SERIES_INTRADAY";
-        const url: string = buildUrl(this.baseUrl, {
+        return buildUrl(this.baseUrl, {
             path: "query",
             queryParams: {
                 function: intraDayFunction,
@@ -74,6 +68,10 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
                 interval: interval
             }
         });
+    }
+
+    async getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]> {
+        const url: string = this.getIntraDayDataUrl(symbol, exchange, interval);
         this.verbose && Logger.log("AlphaVantageAPI : getIntraDayData url >> " + url);
 
         const responseCSVString: string = await axios.get(url).then((response) => {
@@ -149,9 +147,9 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
      * @param {string} exchange
      * @param {string} interval
      */
-    async getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]> {
+    getDailyDataUrl(symbol: string, exchange: string, interval: string): string {
         const timeSeriesDailyFunction = "TIME_SERIES_DAILY";
-        const url: string = buildUrl(this.baseUrl, {
+        return buildUrl(this.baseUrl, {
             path: "query",
             queryParams: {
                 function: timeSeriesDailyFunction,
@@ -161,6 +159,10 @@ export class AlphaVantageAPI implements IAlphavantageAPI {
                 outputsize: this.outputSize
             }
         });
+    }
+
+    async getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]> {
+        const url: string = this.getDailyDataUrl(symbol, exchange, interval);
         this.verbose && Logger.log("AlphaVantageAPI : getDailyData url >> " + url);
 
         const responseCSVString: string = await axios.get(url).then((response) => {

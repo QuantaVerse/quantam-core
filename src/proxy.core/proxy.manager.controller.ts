@@ -55,9 +55,7 @@ export class ProxyManagerController {
      * @returns Promise<StockDataRetrievalJobResponseDto | HttpException>
      */
     @Post("createJob")
-    async pullDataFromProxy(
-        @Body() stockDataRetrievalJobDto: StockDataRetrievalJobDto
-    ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
+    async pullDataFromProxy(@Body() stockDataRetrievalJobDto: StockDataRetrievalJobDto): Promise<StockDataRetrievalJobResponseDto | HttpException> {
         Logger.log(`ProxyManagerController : pullDataFromProxy : stockDataRetrievalJobDto = ${JSON.stringify(stockDataRetrievalJobDto)}`);
         return await this.proxyManagerService.createStockDataRetrievalJob(stockDataRetrievalJobDto);
     }
@@ -65,12 +63,12 @@ export class ProxyManagerController {
     /**
      * API Endpoint for getting details of one ProxyJobLog
      *
-     * @param jobId - Id of the ProxyJobLog
+     * @param {number} jobId - Id of the ProxyJobLog
      *
      * @returns Promise<ProxyJobLog>
      */
     @Get("job/:jobId")
-    async getJobData(@Param("jobId") jobId: string): Promise<ProxyJobLog> {
+    async getJobData(@Param("jobId") jobId: number): Promise<ProxyJobLog> {
         Logger.log(`ProxyManagerController : getJobData : jobId = ${jobId}`);
         return await this.proxyManagerService.getJobDataById(jobId);
     }

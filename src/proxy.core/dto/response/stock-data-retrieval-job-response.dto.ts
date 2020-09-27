@@ -1,7 +1,9 @@
-export class StockDataRetrievalJobResponseDto {
-    jobId: string;
+import { ProxyJobLog } from "../../../db/entity/proxy.job.log.entity";
 
-    constructor(jobId: string) {
-        this.jobId = jobId;
+export class StockDataRetrievalJobResponseDto {
+    proxyJobLog: ProxyJobLog;
+
+    constructor(proxyJobLog: ProxyJobLog) {
+        this.proxyJobLog = proxyJobLog;
     }
 }

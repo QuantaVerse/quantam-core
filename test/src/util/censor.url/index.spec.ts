@@ -8,9 +8,7 @@ describe("Testing censorAPI method", () => {
     });
 
     test("censorAPI with one param to censor", () => {
-        expect(censorAPI("http://www.qd-core.com?apikey=qwertyuiop", ["apikey", "test_key"])).toEqual(
-            "http://www.qd-core.com?apikey=q********p"
-        );
+        expect(censorAPI("http://www.qd-core.com?apikey=qwertyuiop", ["apikey", "test_key"])).toEqual("http://www.qd-core.com?apikey=q********p");
     });
 
     test("censorAPI with one param to censor and some uncensored params", () => {
@@ -21,11 +19,7 @@ describe("Testing censorAPI method", () => {
 
     test("censorAPI with 3 param to censor and some uncensored params", () => {
         expect(
-            censorAPI("http://www.qd-core.com?val=1&apikey=qwertyuiop&name=test&test_key=123456", [
-                "apikey",
-                "test_key",
-                "censor_this_param"
-            ])
+            censorAPI("http://www.qd-core.com?val=1&apikey=qwertyuiop&name=test&test_key=123456", ["apikey", "test_key", "censor_this_param"])
         ).toEqual("http://www.qd-core.com?val=1&apikey=q********p&name=test&test_key=1****6");
     });
 
@@ -40,8 +34,8 @@ describe("Testing censorAPI method", () => {
     });
 
     test("censorAPI with url path, 0 param to censor and some uncensored params", () => {
-        expect(
-            censorAPI("http://www.qd-core.com/api/v1/test?val=1&apikey=qwertyuiop&test_key=123456&hello=say_hello&version=v2", [])
-        ).toEqual("http://www.qd-core.com/api/v1/test?val=1&apikey=qwertyuiop&test_key=123456&hello=say_hello&version=v2");
+        expect(censorAPI("http://www.qd-core.com/api/v1/test?val=1&apikey=qwertyuiop&test_key=123456&hello=say_hello&version=v2", [])).toEqual(
+            "http://www.qd-core.com/api/v1/test?val=1&apikey=qwertyuiop&test_key=123456&hello=say_hello&version=v2"
+        );
     });
 });

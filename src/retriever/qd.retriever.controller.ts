@@ -78,6 +78,7 @@ export class QuantamDataRetrieverController {
         try {
             stockDataRequestDto = new StockDataRequestDto(symbol, exchange, interval, startDate, endDate, limit);
         } catch (error) {
+            Logger.log(`QuantamDataRetrieverController : ValidationError : ${error}`);
             return new HttpException(`ValidationError : ${error}`, HttpStatus.BAD_REQUEST);
         }
         Logger.log(`QuantamDataRetrieverController : stockDataRequestDto=${JSON.stringify(stockDataRequestDto)}`);

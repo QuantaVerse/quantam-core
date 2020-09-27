@@ -14,7 +14,7 @@ export enum DataType {
  * Time interval between two consecutive data points in the time series.
  * The following values are supported: 1min, 5min, 15min, 30min, 60min, daily, weekly, monthly
  */
-export function AlphavantageInterval(interval: IntervalEnum): string {
+export function alphaVantageInterval(interval: IntervalEnum): string {
     switch (interval) {
         case IntervalEnum.ONE_MIN:
             return "1min";
@@ -49,6 +49,8 @@ export class AlphavantageProxyConfig {
 
 export interface IAlphavantageAPI {
     getHealth(): Promise<any>;
+    getIntraDayDataUrl(symbol: string, exchange: string, interval: string): string;
     getIntraDayData(symbol: string, exchange: string, interval: string): Promise<IntraDayBar[]>;
+    getDailyDataUrl(symbol: string, exchange: string, interval: string): string;
     getDailyData(symbol: string, exchange: string, interval: string): Promise<DailyBar[]>;
 }

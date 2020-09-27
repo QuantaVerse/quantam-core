@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { FindConditions, Repository } from "typeorm";
+import { NotEquals } from "class-validator";
+import { FindConditions, Repository, UpdateResult } from "typeorm";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
 import { StockDataRetrievalJobDto } from "../../proxy.core/dto/request/stock-data-retrieval-job.dto";
@@ -21,7 +22,8 @@ export class ProxyJobLogService {
     async findLatestProxyLogs(proxyName: string): Promise<ProxyJobLog[]> {
         return await this.proxyJobLogRepository.find({
             where: {
-                proxy: proxyName
+                proxy: proxyName,
+                responseStatusCode: NotEquals(null)
             },
             order: {
                 updatedAt: -1
@@ -30,7 +32,7 @@ export class ProxyJobLogService {
         });
     }
 
-    async findProxyJobLogById(jobId: string): Promise<ProxyJobLog> {
+    async findProxyJobLogById(jobId: number): Promise<ProxyJobLog> {
         return await this.proxyJobLogRepository.findOne(jobId);
     }
 
@@ -56,6 +58,15 @@ export class ProxyJobLogService {
                 updatedAt: -1
             },
             take: limit
+        });
+    }
+
+    async updateProxyJobLog(jobId: number, proxyName: string, url: string, responseStatusCode: number, message: string): Promise<UpdateResult> {
+        return await this.proxyJobLogRepository.update(jobId, {
+            proxy: proxyName,
+            api: url,
+            responseStatusCode: responseStatusCode,
+            message: message
         });
     }
 

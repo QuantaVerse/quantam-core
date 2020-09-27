@@ -33,11 +33,7 @@ export class QuantamDataRetrieverService implements QuantamDataRetrieverServiceI
      * @returns {Promise<StockData[]>}
      */
     async fetchStockData(stockDataRequestDto: StockDataRequestDto): Promise<StockData[]> {
-        Logger.log(
-            `QuantamDataRetrieverService : fetchStockData from stockDataService : stockDataRequestDto=${JSON.stringify(
-                stockDataRequestDto
-            )}`
-        );
+        Logger.log(`QuantamDataRetrieverService : fetchStockData from stockDataService : stockDataRequestDto=${JSON.stringify(stockDataRequestDto)}`);
         return this.stockDataService.fetchStockData(stockDataRequestDto);
     }
 

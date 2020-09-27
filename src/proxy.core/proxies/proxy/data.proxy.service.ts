@@ -111,10 +111,7 @@ export class DataProxyService implements DataProxyInterface {
         return null;
     }
 
-    async retrieveStockData(
-        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
-        jobId: number | null
-    ): Promise<StockDataRetrievalJobResponseDto> {
+    async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto> {
         const message = `DataProxyService : retrieveStockData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
@@ -132,6 +129,7 @@ export class DataProxyService implements DataProxyInterface {
             );
             return await this.retrieveStockData(stockDataRetrievalJobDto, jobId);
         } catch (exception) {
+            await this.proxyJobLogService.updateProxyJobLog(jobId, this.PROXY_NAME, null, HttpStatus.CONTINUE, exception.toString());
             Logger.log(`DataProxyService : retrieveStockDataViaProxyChain : ${exception}`);
         }
         if (this._nextProxy != null) {

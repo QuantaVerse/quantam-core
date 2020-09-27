@@ -17,7 +17,6 @@ export class ProxyManagerService implements ProxyManagerInterface {
     private readonly _proxyServices: Record<string, DataProxyInterface>;
     private readonly _proxyChain: string[];
     private readonly _defaultProxy: DataProxyInterface = null;
-    private readonly VALID_INTERVALS = [1, 5, 15, 30, 60, 1440];
 
     constructor(
         private configService: ConfigService,
@@ -135,7 +134,7 @@ export class ProxyManagerService implements ProxyManagerInterface {
         const jobId: number | null = result?.identifiers?.length ? result.identifiers[0]?.id : null;
 
         const interval: IntervalEnum | undefined = jobDto.interval;
-        if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
+        if (interval !== undefined) {
             if (useProxyChain) {
                 return await this._proxyServices[proxyName].retrieveStockDataViaProxyChain(jobDtoWithProxy, jobId);
             } else {
@@ -150,11 +149,11 @@ export class ProxyManagerService implements ProxyManagerInterface {
     /**
      * @method getJobDataById
      *
-     * @param {string} jobId
+     * @param {number} jobId
      *
      * @returns Promise<ProxyJobLog>
      */
-    async getJobDataById(jobId: string): Promise<ProxyJobLog> {
+    async getJobDataById(jobId: number): Promise<ProxyJobLog> {
         Logger.log(`ProxyManagerService : getJobDataById : jobId = ${jobId}`);
         return await this.proxyJobLogService.findProxyJobLogById(jobId);
     }
