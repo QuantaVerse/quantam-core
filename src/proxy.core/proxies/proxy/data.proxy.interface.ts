@@ -1,5 +1,6 @@
 import { HttpException } from "@nestjs/common";
 
+import { ExchangeEnum, IntervalEnum } from "../../../common/interfaces/data.interface";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 
@@ -28,8 +29,26 @@ export interface ProxyAPIStats {
 export interface DataProxyStats {
     readonly name: string;
     readonly api_key_name: string;
-    readonly proxy_config: Record<string, string>;
+    readonly proxy_config: IDataProxyConfig;
     readonly api_stats: ProxyAPIStats;
+}
+
+export interface IDataProxyConfig {
+    openExchanges: ExchangeEnum[];
+    intraDayIntervals: IntervalEnum[];
+    additionalConfig: Record<string, string>;
+}
+
+export class DataProxyConfig implements IDataProxyConfig {
+    intraDayIntervals: IntervalEnum[];
+    openExchanges: ExchangeEnum[];
+    additionalConfig: Record<string, string>;
+
+    constructor(intraDayIntervals: IntervalEnum[] = [], openExchanges: ExchangeEnum[] = [], additionalConfig: Record<string, string> = {}) {
+        this.intraDayIntervals = intraDayIntervals;
+        this.openExchanges = openExchanges;
+        this.additionalConfig = additionalConfig;
+    }
 }
 
 /**

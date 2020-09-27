@@ -1,4 +1,5 @@
 import { DailyBar, ExchangeEnum, IntervalEnum, IntraDayBar } from "../../../common/interfaces/data.interface";
+import { IDataProxyConfig } from "../proxy/data.proxy.interface";
 
 export enum OutputSize {
     Full = "full",
@@ -52,21 +53,27 @@ export function alphaVantageExchange(exchange: ExchangeEnum): string {
     }
 }
 
-export class AlphavantageProxyConfig {
-    preferredDataType: string;
-    preferredOutputSize: string;
+export class AlphavantageProxyConfig implements IDataProxyConfig {
+    openExchanges: ExchangeEnum[];
     intraDayIntervals: IntervalEnum[];
+    additionalConfig: Record<string, string>;
 
-    constructor(preferredDataType: DataType | undefined, preferredOutputSize: OutputSize | undefined) {
-        this.preferredDataType = preferredDataType !== undefined ? preferredDataType : DataType.JSON;
-        this.preferredOutputSize = preferredOutputSize !== undefined ? preferredOutputSize : OutputSize.Compact;
-        this.intraDayIntervals = [
-            IntervalEnum.ONE_MIN,
-            IntervalEnum.FIVE_MIN,
-            IntervalEnum.FIFTEEN_MIN,
-            IntervalEnum.THIRTY_MIN,
-            IntervalEnum.ONE_HOUR
-        ];
+    constructor(
+        openExchanges: ExchangeEnum[] | undefined = undefined,
+        intraDayIntervals: IntervalEnum[] | undefined = undefined,
+        preferredDataType: DataType | undefined,
+        preferredOutputSize: OutputSize | undefined
+    ) {
+        this.openExchanges =
+            openExchanges !== undefined ? openExchanges : [ExchangeEnum.NASDAQ, ExchangeEnum.NYSE, ExchangeEnum.NSE, ExchangeEnum.BSE];
+        this.intraDayIntervals =
+            intraDayIntervals !== undefined
+                ? intraDayIntervals
+                : [IntervalEnum.ONE_MIN, IntervalEnum.FIVE_MIN, IntervalEnum.FIFTEEN_MIN, IntervalEnum.THIRTY_MIN, IntervalEnum.ONE_HOUR];
+        this.additionalConfig = {
+            preferredDataType: preferredDataType !== undefined ? preferredDataType.toString() : DataType.JSON.toString(),
+            preferredOutputSize: preferredOutputSize !== undefined ? preferredOutputSize.toString() : OutputSize.Compact.toString()
+        };
     }
 }
 

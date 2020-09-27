@@ -5,17 +5,17 @@ import { fromCSV, IDataFrame } from "data-forge";
 import { DailyBar, IntraDayBar } from "../../../common/interfaces/data.interface";
 import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { buildUrl } from "../../../util/build.url";
-import { DataType, IAlphavantageAPI, OutputSize } from "./alphavantage.interface";
+import { IAlphavantageAPI } from "./alphavantage.interface";
 
 export class AlphaVantageAPI implements IAlphavantageAPI {
     private readonly proxyJobLogService: ProxyJobLogService;
     private readonly baseUrl: string = "https://www.alphavantage.co";
     private readonly apiKey: string;
-    private readonly dataType: DataType;
-    private readonly outputSize: OutputSize;
+    private readonly dataType: string;
+    private readonly outputSize: string;
     private readonly verbose: boolean;
 
-    constructor(proxyJobLogService: ProxyJobLogService, apiKey: string, dataType: DataType, outputSize: OutputSize, verbose: boolean | undefined) {
+    constructor(proxyJobLogService: ProxyJobLogService, apiKey: string, dataType: string, outputSize: string, verbose: boolean | undefined) {
         this.proxyJobLogService = proxyJobLogService;
         this.apiKey = apiKey;
         this.dataType = dataType;

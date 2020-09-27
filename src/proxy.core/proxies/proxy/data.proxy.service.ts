@@ -6,20 +6,20 @@ import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 import { JobTypeEnum } from "../../proxy.manager.interface";
-import { DataProxyInterface, DataProxyStats, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
+import { DataProxyConfig,DataProxyInterface, DataProxyStats, IDataProxyConfig, ProxyAPIStats, ProxyStatus } from "./data.proxy.interface";
 
 @Injectable()
 export class DataProxyService implements DataProxyInterface {
     protected PROXY_NAME: string;
     protected API_KEY_NAME: string;
     protected API_KEY: string;
-    protected PROXY_CONFIG: Record<string, string>;
+    protected PROXY_CONFIG: IDataProxyConfig;
     protected PROXY_API_STATS: ProxyAPIStats;
     protected _nextProxy: DataProxyInterface = null;
     proxyJobLogService: ProxyJobLogService;
 
     constructor(proxyJobLogService: ProxyJobLogService) {
-        this.PROXY_CONFIG = {};
+        this.PROXY_CONFIG = new DataProxyConfig();
         this.PROXY_API_STATS = {
             status: ProxyStatus.Unknown,
             api_hit_rate: undefined

@@ -8,7 +8,7 @@ import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
 import { StockDataService } from "../../../db/service/stock.data.service";
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
-import { DataProxyInterface } from "../proxy/data.proxy.interface";
+import { DataProxyInterface,IDataProxyConfig } from "../proxy/data.proxy.interface";
 import { DataProxyService } from "../proxy/data.proxy.service";
 import { AlphaVantageAPI } from "./alphavantage.api";
 import {
@@ -23,7 +23,7 @@ import {
 @Injectable()
 export class AlphaVantageService extends DataProxyService implements DataProxyInterface {
     private readonly _alphaVantageAPI: IAlphavantageAPI;
-    private readonly ALPHA_PROXY_CONFIG;
+    private readonly ALPHA_PROXY_CONFIG: IDataProxyConfig;
 
     constructor(private configService: ConfigService, private stockDataService: StockDataService, proxyJobLogService: ProxyJobLogService) {
         super(proxyJobLogService);
@@ -31,14 +31,14 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         this.API_KEY_NAME = "PROXY_APIKEY_ALPHA_VANTAGE";
         this.API_KEY = this.configService.get<string>(this.API_KEY_NAME);
 
-        this.ALPHA_PROXY_CONFIG = new AlphavantageProxyConfig(DataType.CSV, OutputSize.Full);
+        this.ALPHA_PROXY_CONFIG = new AlphavantageProxyConfig(undefined, undefined, DataType.CSV, OutputSize.Full);
         this.PROXY_CONFIG = this.ALPHA_PROXY_CONFIG;
 
         this._alphaVantageAPI = new AlphaVantageAPI(
             proxyJobLogService,
             this.API_KEY,
-            this.ALPHA_PROXY_CONFIG.preferredDataType,
-            this.ALPHA_PROXY_CONFIG.preferredOutputSize,
+            this.ALPHA_PROXY_CONFIG.additionalConfig.preferredDataType,
+            this.ALPHA_PROXY_CONFIG.additionalConfig.preferredOutputSize,
             true
         );
     }
@@ -49,7 +49,7 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
 
     async retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto> {
         Logger.log(`AlphaVantageService : retrieveStockData: stockDataRetrievalJobDto=${JSON.stringify(stockDataRetrievalJobDto)} jobId=${jobId}`);
-        if (alphaVantageExchange(stockDataRetrievalJobDto.exchange) != null) {
+        if (this.ALPHA_PROXY_CONFIG?.openExchanges?.includes(stockDataRetrievalJobDto.exchange)) {
             if (stockDataRetrievalJobDto.interval === IntervalEnum.ONE_DAY) {
                 return await this.retrieveDailyData(stockDataRetrievalJobDto, jobId);
             } else if (this.ALPHA_PROXY_CONFIG?.intraDayIntervals?.includes(stockDataRetrievalJobDto.interval)) {
