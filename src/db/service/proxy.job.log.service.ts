@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Equal, FindConditions, Not, Repository, UpdateResult } from "typeorm";
 import { InsertResult } from "typeorm/query-builder/result/InsertResult";
 
 import { StockDataRetrievalJobDto } from "../../proxy.core/dto/request/stock-data-retrieval-job.dto";
@@ -21,12 +21,51 @@ export class ProxyJobLogService {
     async findLatestProxyLogs(proxyName: string): Promise<ProxyJobLog[]> {
         return await this.proxyJobLogRepository.find({
             where: {
-                proxy: proxyName
+                proxy: proxyName,
+                responseStatusCode: Not(Equal(0))
             },
             order: {
                 updatedAt: -1
             },
             take: 20
+        });
+    }
+
+    async findProxyJobLogById(jobId: number): Promise<ProxyJobLog> {
+        return await this.proxyJobLogRepository.findOne(jobId);
+    }
+
+    async findProxyJobLogsByParams(
+        proxyName: string | null,
+        jobType: string | null,
+        responseStatusCode: number | null,
+        limit: number
+    ): Promise<ProxyJobLog[]> {
+        const searchParams: FindConditions<ProxyJobLog> = {};
+        if (proxyName != null) {
+            searchParams.proxy = proxyName;
+        }
+        if (jobType != null) {
+            searchParams.jobType = jobType;
+        }
+        if (responseStatusCode != null) {
+            searchParams.responseStatusCode = responseStatusCode;
+        }
+        return await this.proxyJobLogRepository.find({
+            where: searchParams,
+            order: {
+                updatedAt: -1
+            },
+            take: limit
+        });
+    }
+
+    async updateProxyJobLog(jobId: number, proxyName: string, url: string, responseStatusCode: number, message: string): Promise<UpdateResult> {
+        return await this.proxyJobLogRepository.update(jobId, {
+            proxy: proxyName,
+            api: url,
+            responseStatusCode: responseStatusCode,
+            message: message
         });
     }
 

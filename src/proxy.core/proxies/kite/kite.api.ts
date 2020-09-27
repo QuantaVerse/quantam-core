@@ -1,14 +1,36 @@
+import { Logger } from "@nestjs/common";
+import axios from "axios";
 import { KiteConnect } from "kiteconnect";
 
-export class KiteApi {
-    private readonly kc;
+import { ProxyJobLogService } from "../../../db/service/proxy.job.log.service";
+import { buildUrl } from "../../../util/build.url";
+import { IKiteAPI } from "./kite.interface";
 
-    constructor(kc: KiteConnect) {
-        this.kc = new KiteConnect({ api_key: "your_api_key" });
+export class KiteAPI implements IKiteAPI {
+    private readonly proxyJobLogService: ProxyJobLogService;
+    private readonly baseUrl: string = "https://api.kite.trade";
+    private readonly apiKey: string;
+    private readonly verbose: boolean;
+    private readonly kiteConnect: KiteConnect;
+
+    constructor(proxyJobLogService: ProxyJobLogService, apiKey: string, verbose: boolean | undefined) {
+        this.proxyJobLogService = proxyJobLogService;
+        this.apiKey = apiKey;
+        this.verbose = verbose !== undefined ? verbose : false;
+        this.kiteConnect = new KiteConnect({ api_key: this.apiKey, debug: this.verbose });
+
+        // TODO: Next steps
+        // 1. Get an access token from login api and save
+        // 2. Implement intra-day and daily-data fetcher
+        // 3. Delete KiteConnectJs dependency
     }
-    // kc = new KiteConnect({
-    //     api_key: "your_api_key"
-    // });
+
+    async getHealth(): Promise<any> {
+        const url: string = buildUrl(this.baseUrl);
+        this.verbose && Logger.log("KiteAPI : getHealth url >> " + url);
+        return await axios.get(url);
+    }
+
     //
     // kc.generateSession("request_token", "api_secret").then(function(response) {
     //     init();
@@ -23,7 +45,7 @@ export class KiteApi {
     //         .then(function(response) {
     //             // You got user's margin details.
     //         }).catch(function(err) {
-    //         // Something went wrong.
-    //     });
+    //             // Something went wrong.
+    //         });
     // }
 }

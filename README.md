@@ -4,6 +4,7 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
 ![WIP](https://img.shields.io/badge/%20%F0%9F%9A%A7%20-Work%20in%20progress-important)
 
 
+-----------------------------------------------------------
 ### Features
 1. Fetch stock daily data from one of the configured proxies
 1. Fetch stock intra-day data from one of the configured proxies
@@ -13,6 +14,12 @@ Core service driving the Quantam client-side interface and Quantam monitoring in
     1. Kite
 
 
+-----------------------------------------------------------
+### Roadmap
+1. New proxy: Yahoo Finance!
+
+
+-----------------------------------------------------------
 ### Tasks
 - [x] Add Bunyan global logger
 - [ ] Add Bunyan logger on module level
