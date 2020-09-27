@@ -43,6 +43,9 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         stockDataRetrievalJobDto: StockDataRetrievalJobDto,
         jobId: number | null
     ): Promise<StockDataRetrievalJobResponseDto> {
+        Logger.log(
+            `AlphaVantageService : retrieveStockData: stockDataRetrievalJobDto=${JSON.stringify(stockDataRetrievalJobDto)} jobId=${jobId}`
+        );
         if (stockDataRetrievalJobDto.interval >= 1440) {
             return await this.retrieveDailyData(stockDataRetrievalJobDto, jobId);
         } else {
@@ -55,7 +58,11 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         jobId: number | null
     ): Promise<StockDataRetrievalJobResponseDto> {
         // TODO: Use jobId to update the job status
-        Logger.log(`AlphaVantageService : retrieveIntraDayData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto} jobId=${jobId}`);
+        Logger.log(
+            `AlphaVantageService : retrieveIntraDayData: stockDataRetrievalJobDto=${JSON.stringify(
+                stockDataRetrievalJobDto
+            )} jobId=${jobId}`
+        );
         const interval: number = stockDataRetrievalJobDto.interval;
         await this._alphaVantageAPI
             .getIntraDayData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, `${interval}min`)
@@ -107,7 +114,9 @@ export class AlphaVantageService extends DataProxyService implements DataProxyIn
         jobId: number | null
     ): Promise<StockDataRetrievalJobResponseDto> {
         // TODO: Use jobId to update the job status
-        Logger.log(`AlphaVantageService : retrieveDailyData: stockDataRetrievalJobDto=${stockDataRetrievalJobDto} jobId=${jobId}`);
+        Logger.log(
+            `AlphaVantageService : retrieveDailyData: stockDataRetrievalJobDto=${JSON.stringify(stockDataRetrievalJobDto)} jobId=${jobId}`
+        );
         const interval: number = stockDataRetrievalJobDto.interval;
         await this._alphaVantageAPI
             .getDailyData(stockDataRetrievalJobDto.symbol, stockDataRetrievalJobDto.exchange, `${interval}min`)

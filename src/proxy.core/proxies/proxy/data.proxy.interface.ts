@@ -1,3 +1,5 @@
+import { HttpException } from "@nestjs/common";
+
 import { StockDataRetrievalJobDto } from "../../dto/request/stock-data-retrieval-job.dto";
 import { StockDataRetrievalJobResponseDto } from "../../dto/response/stock-data-retrieval-job-response.dto";
 
@@ -35,9 +37,15 @@ export interface DataProxyStats {
  * Used as the service interface for DataProxyService
  */
 export interface DataProxyInterface {
+    getProxyName(): string;
+    setNextProxy(nextProxy: DataProxyInterface): void;
     getProxyStats(): Promise<DataProxyStats>;
-    fetchAPIStats(): void;
+    fetchAPIStats(): Promise<ProxyAPIStats>;
     proxyHealthCheckScheduler(): Promise<any>;
     pingProxyHealth(): Promise<any>;
+    retrieveStockDataViaProxyChain(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto | HttpException>;
     retrieveStockData(stockDataRetrievalJobDto: StockDataRetrievalJobDto, jobId: number | null): Promise<StockDataRetrievalJobResponseDto>;
 }

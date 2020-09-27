@@ -52,10 +52,11 @@ export class QuantamDataRetrieverController {
      * intervals are case ignored
      * computation and validation check happens on any interval to reduce it to system defined enum `IntervalEnum`.
      * common valid intervals = ["1m", "1min", "5m", "60m", "1h", "1hour", "1d", "1day", "1w", "1week", "1month"]
-     * @param {string} [startDate=currentTime-interval] - data gets fetched from startDate to endDate
+     * @param {string} [startDate=currentTime-interval*limit] - data gets fetched from startDate to endDate
      * @param {string} [endDate=currentTime] - data gets fetched from startDate to endDate
      * startDate and endDate should have any format accepted by JavaScript Date.parse()
      * Following formats are recommended: "yyyy-mm-dd:hh:mm:ss" OR "yyyy-mm-dd" OR ISOString()
+     * @param {number} [limit=1] - Number of stockData bars. Useful only if startDate is not mentioned.
      * @param {boolean} [sync=false] - if sync is true, data will be fetched synchronously in case data is not found
      *
      * @returns {Promise<StockDataResponseDto | HttpException>}
@@ -67,14 +68,15 @@ export class QuantamDataRetrieverController {
         @Query("interval") interval = "1d",
         @Query("startDate") startDate?: string,
         @Query("endDate") endDate?: string,
+        @Query("limit") limit = 1,
         @Query("sync") sync = false
     ): Promise<StockDataResponseDto | HttpException> {
         Logger.log(
-            `QuantamDataRetrieverController : fetchStockData symbol=${symbol} exchange=${exchange} interval=${interval} startDate=${startDate} endDate=${endDate} sync=${sync}`
+            `QuantamDataRetrieverController : fetchStockData symbol=${symbol} exchange=${exchange} interval=${interval} startDate=${startDate} endDate=${endDate} limit=${limit} sync=${sync}`
         );
         let stockDataRequestDto: StockDataRequestDto;
         try {
-            stockDataRequestDto = new StockDataRequestDto(symbol, exchange, interval, startDate, endDate);
+            stockDataRequestDto = new StockDataRequestDto(symbol, exchange, interval, startDate, endDate, limit);
         } catch (error) {
             return new HttpException(`ValidationError : ${error}`, HttpStatus.BAD_REQUEST);
         }

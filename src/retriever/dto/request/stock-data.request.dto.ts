@@ -16,7 +16,7 @@ export class StockDataRequestDto {
 
     endDate: Date;
 
-    constructor(symbol: string, exchange: string, interval?: string, startDate?: string, endDate?: string) {
+    constructor(symbol: string, exchange: string, interval?: string, startDate?: string, endDate?: string, limit = 1) {
         this.symbol = symbol;
         this.exchange = exchange;
         if (interval === undefined) {
@@ -35,7 +35,10 @@ export class StockDataRequestDto {
             }
         }
         if (startDate === undefined) {
-            this.startDate = new Date(this.endDate.getTime() - this.interval * 60000);
+            if (limit === undefined || limit <= 0) {
+                limit = 1;
+            }
+            this.startDate = new Date(this.endDate.getTime() - limit * this.interval * 60000);
         } else {
             this.startDate = new Date(startDate);
             if (isNaN(this.startDate.getTime())) {

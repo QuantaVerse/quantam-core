@@ -31,6 +31,9 @@ export enum IntervalEnum {
     FIFTEEN_MIN = 15, // 15 minutes
     THIRTY_MIN = 30, // 30 minutes
     ONE_HOUR = 60, // 1 hour
+    THREE_HOUR = 180, // 3 hours
+    SIX_HOUR = 360, // 6 hours
+    TWELVE_HOUR = 720, // 12 hours
     ONE_DAY = 1440, // 1 day
     ONE_WEEK = 10080, // 1 week
     ONE_MONTH = 43200 // 1 Month
@@ -44,6 +47,9 @@ export function getIntervalEnum(interval: string): IntervalEnum {
     intervalMap.set(IntervalEnum.FIFTEEN_MIN, ["15min", "15m", "15"]);
     intervalMap.set(IntervalEnum.THIRTY_MIN, ["30min", "30m", "30"]);
     intervalMap.set(IntervalEnum.ONE_HOUR, ["1hour", "1h", "60min", "60"]);
+    intervalMap.set(IntervalEnum.THREE_HOUR, ["3hour", "3h", "180min", "180"]);
+    intervalMap.set(IntervalEnum.SIX_HOUR, ["6hour", "6h", "360min", "360"]);
+    intervalMap.set(IntervalEnum.TWELVE_HOUR, ["12hour", "12h", "720min", "720"]);
     intervalMap.set(IntervalEnum.ONE_DAY, ["1day", "1d", "1440"]);
     intervalMap.set(IntervalEnum.ONE_WEEK, ["1week", "1w"]);
     intervalMap.set(IntervalEnum.ONE_MONTH, ["1month", "1mon"]);

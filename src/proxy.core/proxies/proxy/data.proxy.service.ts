@@ -15,6 +15,7 @@ export class DataProxyService implements DataProxyInterface {
     protected API_KEY: string;
     protected PROXY_CONFIG: Record<string, string>;
     protected PROXY_API_STATS: ProxyAPIStats;
+    protected _nextProxy: DataProxyInterface = null;
     proxyJobLogService: ProxyJobLogService;
 
     constructor(proxyJobLogService: ProxyJobLogService) {
@@ -24,6 +25,15 @@ export class DataProxyService implements DataProxyInterface {
             api_hit_rate: undefined
         };
         this.proxyJobLogService = proxyJobLogService;
+    }
+
+    getProxyName(): string {
+        return this.PROXY_NAME;
+    }
+
+    setNextProxy(nextProxy: DataProxyInterface): void {
+        Logger.log(`DataProxyService : setting next proxy : ${this.PROXY_NAME} -> ${nextProxy.getProxyName()}`);
+        this._nextProxy = nextProxy;
     }
 
     async getProxyStats(): Promise<DataProxyStats> {
@@ -108,5 +118,42 @@ export class DataProxyService implements DataProxyInterface {
         const message = `DataProxyService : retrieveStockData : DataProxy '${this.PROXY_NAME}' has not implemented this method`;
         Logger.warn(message);
         throw new HttpException(message, HttpStatus.BAD_REQUEST);
+    }
+
+    async retrieveStockDataViaProxyChain(
+        stockDataRetrievalJobDto: StockDataRetrievalJobDto,
+        jobId: number | null
+    ): Promise<StockDataRetrievalJobResponseDto | HttpException> {
+        try {
+            Logger.log(
+                `DataProxyService : retrieveStockDataViaProxyChain : stockDataRetrievalJobDto=${JSON.stringify(
+                    stockDataRetrievalJobDto
+                )} jobId=${jobId}`
+            );
+            return await this.retrieveStockData(stockDataRetrievalJobDto, jobId);
+        } catch (exception) {
+            Logger.log(`DataProxyService : retrieveStockDataViaProxyChain : ${exception}`);
+        }
+        if (this._nextProxy != null) {
+            const nextProxyName = this._nextProxy.getProxyName();
+            Logger.log(
+                `DataProxyService : retrieveStockDataViaProxyChain : trying to retrieve from next proxy in chain : nextProxy='${nextProxyName}'`
+            );
+            const jobDtoWithNextProxy = new StockDataRetrievalJobDto(
+                stockDataRetrievalJobDto.symbol,
+                stockDataRetrievalJobDto.exchange,
+                stockDataRetrievalJobDto.interval,
+                stockDataRetrievalJobDto.fromDate,
+                stockDataRetrievalJobDto.toDate,
+                stockDataRetrievalJobDto.referrer,
+                nextProxyName
+            );
+            const result = await this.proxyJobLogService.createJobLogFromStockDataRetrievalJobDto(jobDtoWithNextProxy);
+            const nextJobId: number | null = result?.identifiers?.length ? result.identifiers[0]?.id : null;
+            await this._nextProxy.retrieveStockDataViaProxyChain(jobDtoWithNextProxy, nextJobId);
+        } else {
+            Logger.log(`DataProxyService : retrieveStockDataViaProxyChain : Data not found in proxy chain!`);
+            throw new HttpException("Data not found in proxy chain!", HttpStatus.NOT_FOUND);
+        }
     }
 }

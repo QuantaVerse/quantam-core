@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 import { IntervalEnum } from "../common/interfaces/data.interface";
 import { ProxyJobLog } from "../db/entity/proxy.job.log.entity";
@@ -14,19 +15,48 @@ import { ProxyManagerInterface } from "./proxy.manager.interface";
 @Injectable()
 export class ProxyManagerService implements ProxyManagerInterface {
     private readonly _proxyServices: Record<string, DataProxyInterface>;
+    private readonly _proxyChain: string[];
+    private readonly _defaultProxy: DataProxyInterface = null;
     private readonly VALID_INTERVALS = [1, 5, 15, 30, 60, 1440];
 
     constructor(
+        private configService: ConfigService,
+        private proxyJobLogService: ProxyJobLogService,
         private alphaVantageService: AlphaVantageService,
         private kiteService: KiteService,
-        private marketStackService: MarketStackService,
-        private proxyJobLogService: ProxyJobLogService
+        private marketStackService: MarketStackService
     ) {
         this._proxyServices = {
             alphavantage: alphaVantageService,
             kite: kiteService,
             marketstack: marketStackService
         };
+
+        this._proxyChain = this.configService.get<string>("PROXY_PREFERENCE").split(",");
+        Logger.log(`ProxyManagerService : constructor : configuring proxyChain : ${this._proxyChain}`);
+
+        let lastProxy: DataProxyInterface = null;
+        if (this._proxyChain.length === 0) {
+            Logger.error(
+                `ProxyManagerService : constructor : Invalid proxy chain config! Proxy chain is empty! this._proxyChain = ${this._proxyChain}`
+            );
+            throw Error("Invalid proxy chain config! Proxy chain is empty!");
+        }
+        for (const proxyName of this._proxyChain) {
+            if (proxyName in this._proxyServices) {
+                if (lastProxy === null) {
+                    this._defaultProxy = this._proxyServices[proxyName];
+                } else {
+                    lastProxy.setNextProxy(this._proxyServices[proxyName]);
+                }
+                lastProxy = this._proxyServices[proxyName];
+            } else {
+                Logger.error(
+                    `ProxyManagerService : constructor : Invalid proxy chain config! Proxy with '${proxyName}' not found! this._proxyChain = ${this._proxyChain}`
+                );
+                throw Error(`Invalid proxy chain config! Proxy with '${proxyName}' not found!`);
+            }
+        }
     }
 
     /**
@@ -83,13 +113,13 @@ export class ProxyManagerService implements ProxyManagerInterface {
         Logger.log(`ProxyManagerService : createStockDataRetrievalJob : stockDataRetrievalJobDto ${JSON.stringify(jobDto)}`);
 
         let proxyName: string | undefined = jobDto.proxy?.toLowerCase();
+        let useProxyChain = false;
         if (typeof proxyName === "string" && !this._proxyServices.hasOwnProperty(proxyName)) {
             Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Proxy not found : HttpStatus.BAD_REQUEST");
             throw new HttpException("Proxy not found", HttpStatus.BAD_REQUEST);
         } else if (proxyName === undefined) {
-            // TODO: select based on current proxyManagerStats and stockDataRetrievalJobDto
-            // TODO: select proxy preference from config (this method will use chain of responsibility pattern)
-            proxyName = "alphavantage";
+            proxyName = this._defaultProxy.getProxyName().toLowerCase();
+            useProxyChain = true;
         }
 
         const jobDtoWithProxy = new StockDataRetrievalJobDto(
@@ -106,7 +136,11 @@ export class ProxyManagerService implements ProxyManagerInterface {
 
         const interval: IntervalEnum | undefined = jobDto.interval;
         if (interval !== undefined && this.VALID_INTERVALS.includes(interval)) {
-            return await this._proxyServices[proxyName].retrieveStockData(jobDtoWithProxy, jobId);
+            if (useProxyChain) {
+                return await this._proxyServices[proxyName].retrieveStockDataViaProxyChain(jobDtoWithProxy, jobId);
+            } else {
+                return await this._proxyServices[proxyName].retrieveStockData(jobDtoWithProxy, jobId);
+            }
         } else {
             Logger.warn("ProxyManagerService : createStockDataRetrievalJob : Given interval is invalid : HttpStatus.BAD_REQUEST");
             throw new HttpException("Given interval is invalid", HttpStatus.BAD_REQUEST);
