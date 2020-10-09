@@ -32,7 +32,7 @@
         "bunyan-format": "0.2.1",
         "class-transformer": "0.3.1",
         "class-validator": "0.12.2",
-        "data-forge": "1.8.11",
+        "data-forge": "1.8.12",
         "eslint-plugin-simple-import-sort": "5.0.3",
         "joi": "17.2.1",
         "kiteconnect": "3.1.0",
