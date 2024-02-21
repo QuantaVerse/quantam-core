@@ -35,7 +35,7 @@
         "data-forge": "1.8.12",
         "eslint-plugin-simple-import-sort": "5.0.3",
         "joi": "17.2.1",
-        "kiteconnect": "3.1.0",
+        "kiteconnect": "4.1.0",
         "pg": "8.4.1",
         "reflect-metadata": "0.1.13",
         "rimraf": "^3.0.2",
